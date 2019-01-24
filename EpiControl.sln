@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EpiControl", "EpiControl.csproj", "{65BF7C45-81C2-4027-8364-A2BE3AD86B2B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65BF7C45-81C2-4027-8364-A2BE3AD86B2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65BF7C45-81C2-4027-8364-A2BE3AD86B2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65BF7C45-81C2-4027-8364-A2BE3AD86B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65BF7C45-81C2-4027-8364-A2BE3AD86B2B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {23E5DD77-A6A9-42B1-B94C-F9C6CE354D71}
+	EndGlobalSection
+EndGlobal
