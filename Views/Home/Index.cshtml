@@ -13,15 +13,27 @@
         //launch
         $(document).ready(function () {
 
-            //fire this Mother up
-            APP.init();
+
+            //check browser isn't IE11
+            if (!!window.MSInputMethodContext && !!document.documentMode) //IF IE =11
+            {
+                $('#browser-warning').show();
+                $('.control-container').hide();
+            } else {
+                //fire this Mother up
+                APP.init();
+            }
+
 
         })
 
     </script>
 }
+<div class="alert alert-danger" id="browser-warning" style="display:none" role="alert">
+    <p>THIS APPLICATION DOES NOT SUPPORT INTERNET EXPLORER 11.</p>  <p>PLEASE USE A MODERN BROWSER SUCH AS GOOGLE CHROME, MICROSOFT EDGE OR MOZILLA FIREFOX.</p>
+</div>
 
-<div class="container  mt-3">
+<div class="container control-container  mt-3 ">
     <div class="input-group ml-3">
         <div class="input-group-prepend">
             <span class="input-group-text">Meeting:</span>
@@ -45,13 +57,13 @@
         </div>
 
         <div class="row ">
-            <div id="patients" class="col-7 " style="display:inline-block">
+            <div id="patients" class="col-9 " style="display:inline-block">
 
             </div>
             <div class="col-2">
-                <button type="button" class=" btn btn-info">Add patient</button>
+                <button type="button" id="addNewPatient" class=" btn btn-info">Add patient</button>
             </div>
-          
+
         </div>
 
     </div>
@@ -74,11 +86,11 @@
 
             </div>
         </div>
-        <div class="row" style="background-color:#f2f2b1">
-            <div id="patientDetails" class="col-12">
+        @*<div class="row" style="background-color:#f2f2b1">
+                <div id="patientDetails" class="col-12">
 
-            </div>
-        </div>
+                </div>
+            </div>*@
 
         <div class="row  p-4">
             <div class="col-5" id="questions"></div>
@@ -93,7 +105,7 @@
 
 </div>
 
-<div id="addNewDialog" class="modal" tabindex="-1" role="dialog">
+<div id="addNewQuestionDialog" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -114,6 +126,57 @@
             </div>
             <div class="modal-footer">
                 <button type="button" id="submitNewQuesion" class="btn btn-primary">Save question</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="addNewPatientDialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add a new patient</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form id="newPatientForm">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Hospital number</label>
+                                <input class="form-control" id="newHospitalNumber" />
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>DOB</label>
+                                <input class="form-control" id="newDOB" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Firstname</label>
+                                    <input class="form-control" id="newFirstname" />
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label> Surname</label>
+                                    <input class="form-control" id="newSurname" />
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submitNewPatient" class="btn btn-primary">Save patient</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>

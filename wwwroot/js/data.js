@@ -39,9 +39,22 @@
         return $.post('https://api.epivote.uk/vote/AddQuestion', { meetingPatientID: meetingPatientID, questionText: questionText });
     }
 
+    function addNewPatient(hospitalNumber, firstname, surname, dob, meetingID) {
+        return $.post('AddPatient',
+            {
+                hospitalNumber: hospitalNumber,
+                firstname: firstname,
+                surname: surname,
+                DOB: dob,
+                meetingID: meetingID
+            });
+    }
+
     function getPatientDetails(patientID) {
         return $.getJSON('GetPatientDetails/' + patientID);
     }
+
+
 
     return {
         getResults: getResults,
@@ -54,7 +67,8 @@
         getQuestion: getQuestion,
         getPatientDetails: getPatientDetails,
         getSelectedMeeting: getSelectedMeeting,
-        addNewQuestion: addNewQuestion
+        addNewQuestion: addNewQuestion,
+        addNewPatient: addNewPatient
     };
 
 })();

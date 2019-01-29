@@ -7,6 +7,7 @@
     function renderPatientDetails(patient) {
 
         return new Promise((resolve) => {
+            $('#patientNumber').html('<h4 class="mb-2 mt-2"> Patient ' + patient.patientNumber + '</h4>');
             $('#hospitalNumber').html('<h4 class="mb-2 mt-2">' + patient.hospitalNumber + '</h4>');
             $('#patientName').html('<h4 class="mb-2 mt-2">' + patient.firstname + ' ' + patient.surname + '</h4>');
             $('#patientAge').html('<h4 class="mb-2 mt-2">' + patient.age + '</h4>');
@@ -51,20 +52,20 @@
 
     }
 
-    function renderQuestions(questions) {
+    function renderQuestions(questions, meetingPatientID) {
         $('#questions').hide();
         let html = '';
-        $('#patientNumber').html('<h4 class="mb-2 mt-2"> Patient ' + questions[0].patientNumber + '</h4>');
-        var id = questions[0].meetingPatientID;
-        html += '<button class="btn mr-3 btn-block btn-primary new-question mb-2 mt-2" data-meeting-patient-id="' + id + '">Add new question</button>';
+       // var id = questions[0].meetingPatientID;
+        html += '<button class="btn mr-3 btn-block btn-primary new-question mb-2 mt-2" data-meeting-patient-id="' +
+                meetingPatientID + '">Add new question</button>';
 
         html += '<ul class="list-group mt-2 mb-2" >';
         $.each(questions, function (index) {
             html += '<li data-meeting-patient-question-id="' + this.meetingPatientQuestionID + '" class="list-group-item question-row">';
             html += this.questionText;
-            html += '</li>';
-            html += '</div>';
+            html += '</li>';        
         });
+        html += '</ul>';
 
         $('#questions').html(html).fadeIn('slow');
 

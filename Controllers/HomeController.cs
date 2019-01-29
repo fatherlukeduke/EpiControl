@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
+
 namespace EpiControl.Controllers
 {
     
@@ -27,7 +28,7 @@ namespace EpiControl.Controllers
 
         public IActionResult Index()
         {
-            var test = db.Patient.ToList();
+            //var test = db.Patient.ToList();
             return View();
         }
 
@@ -56,7 +57,7 @@ namespace EpiControl.Controllers
 
                 if (patient == null)
                 {
-                    return NotFound("nopatient");
+                    return NotFound("no-patient");
                 }
                 else
                 {
@@ -80,20 +81,35 @@ namespace EpiControl.Controllers
         }
 
         [HttpPost]
-        [Route("AddQuestion")]
-        public async Task<ActionResult<Patient>> AddPatient(string hospitalNumber, string surname, string firstname, DateTime DOB, int meetingID)
+        [Route("AddPatient")]
+        public async Task<ActionResult<Patient>> AddPatient(int hospitalNumber, string surname, string firstname, DateTime DOB, int meetingID)
         {
+           
             try
             {
                 
                 HttpClient client = new HttpClient();
-                var response = await client.PostAsync("https://api.epivote.uk/AddPatient", new JsonContent(new { meetingID = meetingID }));
+                var response = await client.PostAsync("https://api.epivote.uk/vote/AddPatient/" + meetingID.ToString(), null);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
 
                 MeetingPatient meetingPatient = JsonConvert.DeserializeObject<MeetingPatient>(responseBody);
 
-                Patient localPatient = new Patient();
+                Patient localPatient = new Patient()
+                {
+                    HospitalNumber = hospitalNumber,
+                    Surname = surname,
+                    Firstname = firstname,
+                    DOB = DOB,
+                    MeetingID = meetingID,
+                    MeetingPatientID = meetingPatient.MeetingPatientID,
+                    PatientNumber = meetingPatient.PatientNumber
+                };
+
+                localPatient.MeetingPatientID = meetingPatient.MeetingPatientID;              
+
+                db.Patient.Add(localPatient);
+                db.SaveChanges();
 
                 return localPatient;
 
@@ -104,12 +120,12 @@ namespace EpiControl.Controllers
             }
         }
 
-        public class JsonContent : StringContent
-        {
-            public JsonContent(object obj) :
-                base(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json")
-            { }
-        }
+        //public class JsonContent : StringContent
+        //{
+        //    public JsonContent(object obj) :
+        //        base(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json")
+        //    { }
+        //}
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
