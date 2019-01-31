@@ -68,7 +68,7 @@
 
     </div>
 
-    <div style="background-color:#e8e8d6" class="container border m-3 control-panel">
+    <div style="background-color:#e8e8d6;display:none" class="container border m-3 control-panel">
         <div class="row patient-details " style="background-color:#f2f2b1">
             <div id="patientNumber" class="col-2">
 
@@ -142,7 +142,9 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="alert alert-danger" id="addPatientError" style="display:none;">
 
+                </div>
                 <form id="newPatientForm">
                     <div class="row">
                         <div class="col-6">

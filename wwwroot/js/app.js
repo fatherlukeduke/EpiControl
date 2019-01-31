@@ -29,6 +29,7 @@ var APP = (function (data_api, render) {
     function registerEvents() {
 
         //get patients for meeting
+        //------------------------------------------------------------------
         $('body').on('change', '#meetingChoices', e => {
             let meetingDate = $('#meetingChoices option:selected').html();
             if (!$('#meetingChoices').val()) {
@@ -51,36 +52,46 @@ var APP = (function (data_api, render) {
             }
         });
 
+        //add new patient
+          //------------------------------------------------------------------
         $('body').on('click', '#addNewPatient', e => {
+            $('#newPatientForm input').val('');
             $('#addNewPatientDialog').modal();
-            $('#newHospitalNumber').focus();    
+            $('#newHospitalNumber').focus();
+            $('#addPatientError').hide();
+            $('#newDOB').datetimepicker({
+                format: 'd/m/Y', timepicker: false,
+                mask: true
+            });                         
+        });
 
+        $('body').on('click', '#submitNewPatient', e => {
             let validated = true;
 
-            $('body').on('click', '#submitNewPatient' , e => {
-                //validate
-                $('#newPatientForm input').each((index, element) => {                  
-                    if ($(element).val().length === 0) {
-                        validated = false;
-                    }
-                })
-
-                if (validated) {
-                    data_api.addNewPatient(
-                            $('#newHospitalNumber').val(),
-                            $('#newFirstname').val(),
-                            $('#newSurname').val(),
-                            $('#newDOB').val(),
-                             $('#meetingChoices').val()
-                        )
-                        .then(() => {
-                            $('#addNewPatientDialog').modal('hide');
-                        })
+            //validate
+            $('#newPatientForm input').each((index, element) => {
+                if ($(element).val().length === 0) {
+                    validated = false;
                 }
-            })
-        })
+            });
+
+            if (validated) {
+                data_api.addNewPatient(
+                    $('#newHospitalNumber').val(),
+                    $('#newFirstname').val(),
+                    $('#newSurname').val(),
+                    $('#newDOB').val(),
+                    $('#meetingChoices').val()
+                ).then(patient => data_api.getPatients($('#meetingChoices').val()))
+                 .then(patients => render.patients(patients));
+                $('#addNewPatientDialog').modal('hide');
+            } else {
+                $('#addPatientError').html('You need to fill all the fields in.').show();
+            }
+        });
 
         //select a patient
+          //------------------------------------------------------------------
         $('body').on('click', '.pick-patient', e => {
             $('.patient-details').hide('slow');
             $('.question-result').hide();
@@ -96,6 +107,7 @@ var APP = (function (data_api, render) {
         });
 
         //open vote
+        //------------------------------------------------------------------
         $('body').on('click', '.open-vote', e => {
             var meetingPatientQuestionID = $(e.currentTarget).data('meeting-patient-question-id');
             data_api.openVoteForQuestion(meetingPatientQuestionID)
@@ -103,6 +115,7 @@ var APP = (function (data_api, render) {
         });
 
         //select a question
+        //------------------------------------------------------------------
         $('body').on('click', '.question-row', (e) => {
             AJAX_LOADER_TIMEOUT = setTimeout(function () {
                 $('#score').html('<h2>Loading...</h2>');
@@ -120,6 +133,7 @@ var APP = (function (data_api, render) {
         });
 
         //complete the vote
+        //------------------------------------------------------------------
         $('body').on('click', '.complete-vote', e => {
             let id = $(e.currentTarget).data('meeting-patient-question-id');
             data_api.completeVoteForQuestion(id)
@@ -130,35 +144,39 @@ var APP = (function (data_api, render) {
                     $('.question-row, .pick-patient').removeClass('question-disabled');
                     $('.question-row, .pick-patient').prop('disabled', false);
                     $('.new-question').prop('disabled', false);
+                    $('#addNewPatient').prop('disabled', false);
                    // data_api.getQuestionsForPatient(meetingPatientID);
                 });
         });
 
+
         //add new question
+        //------------------------------------------------------------------
+        $('body').on('click', '#submitNewQuesion', e => {
+            const meetingPatientID = $('.selected-patient').data('meeting-patient-id');
+            const questionText = $('#newQuestionText').val();
+            data_api.addNewQuestion(meetingPatientID, questionText)
+                .then(newQuestion => data_api.getQuestionsForPatient(meetingPatientID))
+                .then((questions) => render.questions(questions));
+            $('#addNewQuestionDialog').modal('hide');
+        });
+
         $('body').on('click', '.new-question', e => {
             $('#addNewQuestionDialog').modal();
             $('#newQuestionText').focus();
-         
-            $('body').on('click', '#submitNewQuesion', e => {
-                const meetingPatientID = $('.selected-patient').data('meeting-patient-id');
-                const questionText = $('#newQuestionText').val();
-                data_api.addNewQuestion(meetingPatientID, questionText)
-                    .then(newQuestion => data_api.getQuestionsForPatient(meetingPatientID))
-                    .then((questions) => render.questions(questions));
-                $('#addNewQuestionDialog').modal('hide');
-            });
-    });
+            $('#newQuestionText').val('');
+        });
 
       
 
         //test only - reset all the questions
+        //------------------------------------------------------------------
         $('body').on('click', '.open-all', e => {
             let id = $(e.currentTarget).data('meeting-id');
             $.post('https://api.epivote.uk/vote/ResetMeeting/' + id)
                 .then(() => data_api.getQuestionsForPatient(id));
         });
 
-     
     }
 
 

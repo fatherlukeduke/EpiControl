@@ -17,7 +17,7 @@
             if (CHART) {
                 CHART.destroy();
             }
-            $('#score').html('')
+            $('#score').html('');
 
             resolve(patient);
         });
@@ -28,15 +28,16 @@
         $('.question-row, .pick-patient').not('.selected-patient').addClass('question-disabled');
         $('.question-row, .pick-patient').prop('disabled', true);
         $('.new-question').prop('disabled', true);
+        $('#addNewPatient').prop('disabled', true);
         var html = '<h3>Question open for voting</h3><img style="height:150px;" src = "images/loader.gif" />';
         html += '<button class="btn mr-3 btn-block btn-primary complete-vote mb-2 mt-2" data-meeting-patient-question-id="'
             + meetingPatientQuestionID + '" > Close voting</button >';
 
-        $('#score').show().html(html).fadeIn('slow');;
+        $('#score').show().html(html).fadeIn('slow');
     }
 
-    function renderPatients(patients, meetingDate) {
-
+    function renderPatients(patients) {
+        let meetingDate = $('#meetingChoices option:selected').html();
         $('#meetingDate').html('<h5 class="mr-2 mb-2 ml-2">Meeting date: ' + meetingDate + '</h5>');
         let html = '<h3 style="display:inline-block" class="ml-2 mr-4">Patients: </h3>';
         $.each(patients, function (index) {
