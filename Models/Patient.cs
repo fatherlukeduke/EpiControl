@@ -21,7 +21,6 @@ namespace EpiControl.Models
         
         [NotMapped]
         public string Age { get; set; }
-        [NotMapped]
-        public bool VotingOpen { get; set; }
+
     }
 }
