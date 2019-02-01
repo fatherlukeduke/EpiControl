@@ -20,7 +20,7 @@
     }
 
     function getPatients(meetingID) {
-        return $.getJSON('GetPatients/' + meetingID);
+        return $.getJSON(BASE_URL  + '/GetPatients/' + meetingID);
     }
 
     function getSelectedMeeting(meetingID) {
@@ -40,7 +40,7 @@
     }
 
     function addNewPatient(hospitalNumber, firstname, surname, dob, meetingID) {
-        return $.post('AddPatient',
+        return $.post(BASE_URL +'/AddPatient',
             {
                 hospitalNumber: hospitalNumber,
                 firstname: firstname,
@@ -51,7 +51,7 @@
     }
 
     function getPatientDetails(patientID) {
-        return $.getJSON('GetPatientDetails/' + patientID);
+        return $.getJSON(BASE_URL +'/GetPatientDetails/' + patientID);
     }
 
 

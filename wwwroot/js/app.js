@@ -2,11 +2,13 @@
 
 var ACTIVE_QUESTION;   //global to track if there is an active question
 var AJAX_LOADER_TIMEOUT;  //global to track timeout timers
+var BASE_URL;
 
 var APP = (function (data_api, render) {
 
-    function init() {
+    function init(baseUrl) {
 
+        BASE_URL = baseUrl;
 
         data_api.getMeetings()
             .then(data => {
@@ -125,7 +127,7 @@ var APP = (function (data_api, render) {
             $('.question-row').removeClass('selected-patient');
             $('.selected-arrow').remove();
             $(e.currentTarget).addClass('selected-patient');
-            $(e.currentTarget).append('<img style="width:30px;float:right" src="/open-iconic/svg/arrow-thick-right.svg" class="selected-arrow">');
+            $(e.currentTarget).append('<img style="width:30px;float:right" src="' + BASE_URL + '/open-iconic/svg/arrow-thick-right.svg" class="selected-arrow">');
             data_api.getQuestion(id)
                 .then(data => {
                     render.questionResult(data);

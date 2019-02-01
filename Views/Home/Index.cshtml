@@ -20,8 +20,9 @@
                 $('#browser-warning').show();
                 $('.control-container').hide();
             } else {
-                //fire this Mother up
-                APP.init();
+                let baseUrl = '@Url.Content("~")';
+                    //fire this Mother up
+                    APP.init(baseUrl);
             }
 
 
