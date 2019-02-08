@@ -40,9 +40,10 @@ body {
     margin-top:40px;
 }
 
-.vote-count{
+.vote-count {
     padding: 10px !important;
- 
+    background-color: #f2f2b1;
+    color: black;
 }
 
 /* Wrapping element */

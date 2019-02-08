@@ -55,7 +55,7 @@ var APP = (function (data_api, render) {
         });
 
         //add new patient
-          //------------------------------------------------------------------
+        //------------------------------------------------------------------
         $('body').on('click', '#addNewPatient', e => {
             $('#newPatientForm input').val('');
             $('#addNewPatientDialog').modal();
@@ -64,7 +64,7 @@ var APP = (function (data_api, render) {
             $('#newDOB').datetimepicker({
                 format: 'd/m/Y', timepicker: false,
                 mask: true
-            });                         
+            });
         });
 
         $('body').on('click', '#submitNewPatient', e => {
@@ -85,7 +85,7 @@ var APP = (function (data_api, render) {
                     $('#newDOB').val(),
                     $('#meetingChoices').val()
                 ).then(patient => data_api.getPatients($('#meetingChoices').val()))
-                 .then(patients => render.patients(patients));
+                    .then(patients => render.patients(patients));
                 $('#addNewPatientDialog').modal('hide');
             } else {
                 $('#addPatientError').html('You need to fill all the fields in.').show();
@@ -93,7 +93,7 @@ var APP = (function (data_api, render) {
         });
 
         //select a patient
-          //------------------------------------------------------------------
+        //------------------------------------------------------------------
         $('body').on('click', '.pick-patient', e => {
             $('.patient-details').hide('slow');
             $('.question-result').hide();
@@ -105,7 +105,7 @@ var APP = (function (data_api, render) {
             data_api.getPatientDetails(patientID)
                 .then(patient => { return render.patientDetails(patient); })
                 .then(patient => data_api.getQuestionsForPatient(patient.meetingPatientID))
-                .then(questions => render.questions(questions, meetingPatientID ));
+                .then(questions => render.questions(questions, meetingPatientID));
         });
 
         //open vote
@@ -118,10 +118,10 @@ var APP = (function (data_api, render) {
 
         //select a question
         //------------------------------------------------------------------
-        $('body').on('click', '.question-row', (e) => {
+        $('body').on('click', '.question-row', e => {
             AJAX_LOADER_TIMEOUT = setTimeout(function () {
                 $('#score').html('<h2>Loading...</h2>');
-            }, 2000);          
+            }, 2000);
             $('.question-result').show();
             let id = $(e.currentTarget).data('meeting-patient-question-id');
             $('.question-row').removeClass('selected-patient');
@@ -141,13 +141,15 @@ var APP = (function (data_api, render) {
             data_api.completeVoteForQuestion(id)
                 .then(() => data_api.getResults(id))
                 .then((results) => {
+                    $('#results').show();
                     render.chart(results.chartData);
-                    $('#score').html('Average score: ' + results.averageScore.toFixed(1));
+                    //render.chart(results.chartData, 'bigChart');
+                    $('#score').html('<h2>Average score: ' + results.averageScore.toFixed(1) + '</h2>');
                     $('.question-row, .pick-patient').removeClass('question-disabled');
                     $('.question-row, .pick-patient').prop('disabled', false);
                     $('.new-question').prop('disabled', false);
                     $('#addNewPatient').prop('disabled', false);
-                   // data_api.getQuestionsForPatient(meetingPatientID);
+                    // data_api.getQuestionsForPatient(meetingPatientID);
                 });
         });
 
@@ -169,7 +171,13 @@ var APP = (function (data_api, render) {
             $('#newQuestionText').val('');
         });
 
-      
+        //enlarge chart
+        //------------------------------------------------------------------
+        $('body').on('click', '.enlarge-chart', e => {
+            $('#showFullResultsDialog').modal();
+
+        })
+
 
         //test only - reset all the questions
         //------------------------------------------------------------------

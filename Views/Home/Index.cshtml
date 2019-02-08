@@ -1,9 +1,12 @@
 ﻿@section Scripts{
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js"></script>
+    @*<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js"></script>*@
+    <script src="~/lib/firebase/firebase-app.js"></script>
+    <script src="~/lib/firebase/firebase-messaging.js"></script>
 
+    <script src="~/js/chart-config.js"></script>
     <script src="~/js/data.js"></script>
     <script src="~/js/render.js"></script>
     <script src="~/js/app.js"></script>
@@ -16,19 +19,16 @@
         //launch
         $(document).ready(function () {
 
-
             //check browser isn't IE11
             if (!!window.MSInputMethodContext && !!document.documentMode) //IF IE =11
             {
                 $('#browser-warning').show();
                 $('.control-container').hide();
             } else {
+                //fire this Mother up
                 let baseUrl = '@Url.Content("~")';
-                    //fire this Mother up
-                    APP.init(baseUrl);
+                APP.init(baseUrl);
             }
-
-
         })
 
     </script>
@@ -96,7 +96,11 @@
             <div class="col-5" id="questions"></div>
             <div style="background-color:white" class="col-6 text-center question-result">
                 <div class="mt-2" id="score"></div>
-                <canvas id="results"></canvas>
+                <div id="results">
+                    <canvas id="chart"></canvas>
+                    <button class="btn btn-outline-primary mb-2 enlarge-chart">Enlarge</button>
+                </div>
+               
             </div>
         </div>
     </div>
@@ -106,7 +110,11 @@
 </div>
 
 
-<!--***********************************DIALOGS***********************************-->
+<!--***********************************************************************
+*************************** DIALOGS***************************************
+**************************************************************************-->
+
+<!--ADD NEW QUESTION-->
 <div id="addNewQuestionDialog" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -134,6 +142,25 @@
     </div>
 </div>
 
+<!--SHOW FULL CHART-->
+<div id="showFullResultsDialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="bigScore"></div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              
+                <canvas id="bigChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--ADD PATIENT-->
 <div id="addNewPatientDialog" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

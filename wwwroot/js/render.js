@@ -1,6 +1,6 @@
 ﻿var RENDER = (function (data_api) {
 
-    var CHART;
+    var BIG_CHART, CHART;
 
     //renderers
     function renderPatientDetails(patient) {
@@ -23,6 +23,7 @@
     }
 
     function renderQuestionOpen(meetingPatientQuestionID) {
+        let voteCount = ACTIVE_QUESTION ? ACTIVE_QUESTION.voteCount : '';
         $('#score').hide();
         $('#results').hide();
         $('.question-row, .pick-patient').not('.selected-patient').addClass('question-disabled');
@@ -30,7 +31,7 @@
         $('.new-question').prop('disabled', true);
         $('#addNewPatient').prop('disabled', true);
         var html = '<h3>Question open for voting</h3>';
-        html += '<div class="row><div class="col"><h3><span class="badge badge-pill badge-dark vote-count">Votes cast: ' +  ACTIVE_QUESTION.voteCount+ '</span></h3></div></div>';
+        html += '<div class="row><div class="col"><h2><span class="badge badge-pill  vote-count">Votes cast: ' + voteCount + '</span></h2></div></div>';
         html += '<img class="mx-auto" style="height:150px;" src = "images/loader.gif" />';
         html += '<button class="btn mr-3 btn-block btn-primary complete-vote mb-2 mt-2" data-meeting-patient-question-id="'
             + meetingPatientQuestionID + '" > Close voting</button >';
@@ -80,11 +81,12 @@
 
     function renderQuestionResult(question) {
         clearTimeout(AJAX_LOADER_TIMEOUT);
-        if (CHART) {
-            CHART.destroy();
-        }
+        //if (CHART) {
+        //    CHART.destroy();
+        //}
         if (!question.votingComplete) {
             $('#score').hide();
+            $('#results').hide();
             var html = '<h3>This question has not been voted on</h3>';
             html += '<button data-meetingid="' + this.meetingID + '" data-meeting-patient-question-id="' +
                 question.meetingPatientQuestionID + '" data-meeting-patient-id="' + question.meetingPatientID +
@@ -97,8 +99,12 @@
         } else {
             data_api.getResults(question.meetingPatientQuestionID)
                 .then(data => {
-                    $('#score').html('<h4>Average score: ' + data.averageScore.toFixed(1) + '</h4>');
+                    let html = '<h2>Average score: ' + data.averageScore.toFixed(1) + '</h2>';
+                    $('#score').html(html);
+                    $('#bigScore').html(html);
+                    $('#results').show();
                     renderChart(data.chartData);
+                    //renderChart(data.chartData, 'bigChart');
                 });
         }
     }
@@ -112,53 +118,14 @@
         if (CHART) {
             CHART.destroy();
         }
-        $('#results').show();
-        CHART = new Chart($('#results'), {
+        if (BIG_CHART) {
+            BIG_CHART.destroy();
+        }
 
-            type: 'horizontalBar',
-            data: {
-                labels: ["Strongly agree (5)", "Agree (4)", "Neutral (3)", "Disagree (2)", "Stongly disagree (1)"],
-                datasets: [{
-                    label: '',
-                    data: chartData,
-                    backgroundColor: [
-                        '#39a16c',
-                        '#bad530',
-                        '#feac27',
-                        '#ff8c33',
-                        '#ff696a'
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                legend: {
-                    display: false
-                },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            fontSize: 12
-                        }
-                    }],
-                    xAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            stepSize : 1,
-                            fontSize: 17
-                        }
-                    }]
-                }
-            }
-        });
+        CHART_CONFIG.data.datasets[0].data = chartData;
+
+        CHART = new Chart($('#chart'), CHART_CONFIG);
+        BIG_CHART = new Chart($('#bigChart'), CHART_CONFIG);
     }
 
 
