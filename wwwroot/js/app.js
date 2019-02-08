@@ -2,7 +2,7 @@
 
 var ACTIVE_QUESTION;   //global to track if there is an active question
 var AJAX_LOADER_TIMEOUT;  //global to track timeout timers
-var BASE_URL;
+var BASE_URL;  //guess what this is?
 
 var APP = (function (data_api, render) {
 

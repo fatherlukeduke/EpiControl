@@ -39,6 +39,10 @@
         return $.post('https://api.epivote.uk/vote/AddQuestion', { meetingPatientID: meetingPatientID, questionText: questionText });
     }
 
+    function sendTokenToServer(token) {
+        return $.post('https://api.epivote.uk/vote/SetControlPanelToken/' + token );
+    }
+
     function addNewPatient(hospitalNumber, firstname, surname, dob, meetingID) {
         return $.post(BASE_URL +'/AddPatient',
             {
@@ -68,7 +72,8 @@
         getPatientDetails: getPatientDetails,
         getSelectedMeeting: getSelectedMeeting,
         addNewQuestion: addNewQuestion,
-        addNewPatient: addNewPatient
+        addNewPatient: addNewPatient,
+        sendTokenToServer: sendTokenToServer
     };
 
 })();

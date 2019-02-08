@@ -1,18 +1,42 @@
-﻿           // Give the service worker access to Firebase Messaging.
-            // Note that you can only use Firebase Messaging here, other Firebase libraries
-            // are not available in the service worker.
+﻿//**********************Register with firebase push messaging*******************************
 
-            // Initialize the Firebase app in the service worker by passing in the
-            // messagingSenderId.
-            //firebase.initializeApp({
-            //    'messagingSenderId': '921294337398',
-            //});
+(function (data_api) {
+    var config = {
+        apiKey: "AIzaSyCAicf3USbiI1Y4wkhMibWa87IKjLJ8_eE",
+        authDomain: "epivotecontrol.firebaseapp.com",
+        databaseURL: "https://epivotecontrol.firebaseio.com",
+        projectId: "epivotecontrol",
+        storageBucket: "epivotecontrol.appspot.com",
+        messagingSenderId: "740789521324"
+    };
 
-            // Retrieve an instance of Firebase Messaging so that it can handle background
-            // messages.
-            //const messaging = firebase.messaging();
 
-            //messaging.onMessage(function (payload) {
-            //    console.log('Message received. ', payload);
-            //    // ...
-            //});
+    firebase.initializeApp(config);
+
+    const messaging = firebase.messaging();
+    messaging
+        .requestPermission()
+        .then(() => {
+            console.log("Notification permission granted.");
+
+            // get the token in the form of promise
+            return messaging.getToken();
+            
+        })
+        .then(token => {
+            console.log("token is : " + token);
+            data_api.sendTokenToServer(token);
+           
+        })
+        .catch(err => {
+            console.log( err);
+        });
+
+    messaging.onMessage(payload => {
+        $('.vote-count').html('Votes cast: ' + payload.data.votes);
+        console.log("Message received. ", payload);
+    });
+
+
+
+}) (DATA_API);

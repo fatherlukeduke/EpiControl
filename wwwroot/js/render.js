@@ -2,7 +2,6 @@
 
     var CHART;
 
-
     //renderers
     function renderPatientDetails(patient) {
 
@@ -25,11 +24,14 @@
 
     function renderQuestionOpen(meetingPatientQuestionID) {
         $('#score').hide();
+        $('#results').hide();
         $('.question-row, .pick-patient').not('.selected-patient').addClass('question-disabled');
         $('.question-row, .pick-patient').prop('disabled', true);
         $('.new-question').prop('disabled', true);
         $('#addNewPatient').prop('disabled', true);
-        var html = '<h3>Question open for voting</h3><img style="height:150px;" src = "images/loader.gif" />';
+        var html = '<h3>Question open for voting</h3>';
+        html += '<div class="row><div class="col"><h3><span class="badge badge-pill badge-dark vote-count">Votes cast: ' +  ACTIVE_QUESTION.voteCount+ '</span></h3></div></div>';
+        html += '<img class="mx-auto" style="height:150px;" src = "images/loader.gif" />';
         html += '<button class="btn mr-3 btn-block btn-primary complete-vote mb-2 mt-2" data-meeting-patient-question-id="'
             + meetingPatientQuestionID + '" > Close voting</button >';
 
@@ -95,7 +97,7 @@
         } else {
             data_api.getResults(question.meetingPatientQuestionID)
                 .then(data => {
-                    $('#score').html('Average score: ' + data.averageScore.toFixed(1));
+                    $('#score').html('<h4>Average score: ' + data.averageScore.toFixed(1) + '</h4>');
                     renderChart(data.chartData);
                 });
         }
@@ -110,12 +112,12 @@
         if (CHART) {
             CHART.destroy();
         }
-
+        $('#results').show();
         CHART = new Chart($('#results'), {
 
             type: 'horizontalBar',
             data: {
-                labels: ["Strongly agree", "Agree", "Neutral", "Disagree", "Stongly disagree"],
+                labels: ["Strongly agree (5)", "Agree (4)", "Neutral (3)", "Disagree (2)", "Stongly disagree (1)"],
                 datasets: [{
                     label: '',
                     data: chartData,
@@ -150,6 +152,7 @@
                     xAxes: [{
                         ticks: {
                             beginAtZero: true,
+                            stepSize : 1,
                             fontSize: 17
                         }
                     }]

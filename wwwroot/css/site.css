@@ -40,6 +40,11 @@ body {
     margin-top:40px;
 }
 
+.vote-count{
+    padding: 10px !important;
+ 
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {

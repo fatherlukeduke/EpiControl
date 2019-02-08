@@ -1,12 +1,15 @@
 ﻿@section Scripts{
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
-    @*<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js"></script>*@
+    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js"></script>
 
     <script src="~/js/data.js"></script>
     <script src="~/js/render.js"></script>
     <script src="~/js/app.js"></script>
+    <script src="~/js/messaging.js"></script>
+
+
 
     <script>
 
@@ -87,16 +90,12 @@
 
             </div>
         </div>
-        @*<div class="row" style="background-color:#f2f2b1">
-                <div id="patientDetails" class="col-12">
 
-                </div>
-            </div>*@
 
         <div class="row  p-4">
             <div class="col-5" id="questions"></div>
             <div style="background-color:white" class="col-6 text-center question-result">
-                <h4 class="mt-2" id="score"></h4>
+                <div class="mt-2" id="score"></div>
                 <canvas id="results"></canvas>
             </div>
         </div>
@@ -106,6 +105,8 @@
 
 </div>
 
+
+<!--***********************************DIALOGS***********************************-->
 <div id="addNewQuestionDialog" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -165,13 +166,13 @@
                         <div class="col-6">
                             <div class="form-group">
                                 <label>Firstname</label>
-                                    <input class="form-control" id="newFirstname" />
+                                <input class="form-control" id="newFirstname" />
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
                                 <label> Surname</label>
-                                    <input class="form-control" id="newSurname" />
+                                <input class="form-control" id="newSurname" />
                             </div>
                         </div>
                     </div>
