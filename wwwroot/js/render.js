@@ -6,12 +6,13 @@
     function renderPatientDetails(patient) {
 
         return new Promise((resolve) => {
+            $('.patient-details div').css('visibility', 'visible');
             $('#patientNumber').html('<h4 class="mb-2 mt-2"> Patient ' + patient.patientNumber + '</h4>');
             $('#hospitalNumber').html('<h4 class="mb-2 mt-2">' + patient.hospitalNumber + '</h4>');
             $('#patientName').html('<h4 class="mb-2 mt-2">' + patient.firstname + ' ' + patient.surname + '</h4>');
             $('#patientAge').html('<h4 class="mb-2 mt-2">' + patient.age + '</h4>');
             $('#patientDOB').html('<h4 class="mb-2 mt-2">' + moment(patient.dob).format('DD/MM/YY') + '</h4>');
-            $('.patient-details').fadeIn('slow');
+            $('.patient-details div').fadeTo('slow', 1);
             //$('#patientDetails').html('<h4 class="mb-2 mt-2">' + patient.patientDetails + '</h4>');
             if (CHART) {
                 CHART.destroy();
@@ -61,6 +62,7 @@
     }
 
     function renderQuestions(questions, meetingPatientID) {
+        clearTimeout(AJAX_LOADER_TIMEOUT);
         $('#questions').hide();
         let html = '';
        // var id = questions[0].meetingPatientID;
@@ -85,9 +87,7 @@
 
     function renderQuestionResult(question) {
         clearTimeout(AJAX_LOADER_TIMEOUT);
-        //if (CHART) {
-        //    CHART.destroy();
-        //}
+
         if (!question.votingComplete) {
             $('#score').hide();
             $('#results').hide();
@@ -114,6 +114,19 @@
     }
 
     function renderMeetingDetails(meeting) {
+        $('.control-panel').show();
+
+        let meetingDate = $('#meetingChoices option:selected').html();
+        $('#meetingDate').html('<h4>Meeting date: ' + meetingDate + '</h4>');
+
+        let meetingCode = $('#meetingChoices option:selected').data('meeting-code');
+        $('#meetingCode').html('<h4>Meeting code: <span class="rounded-pill">' + meetingCode + '</span></h4>');
+
+        let meetingStatus = $('#meetingChoices option:selected').data('meeting-status');
+        ACTIVE_MEETING_STATUS = meetingStatus;
+        let meetingStatusText = meetingStatus ? '<span class="meeting-open change-status rounded-pill">Open</span>'
+                                                : '<span class="meeting-closed  change-status rounded-pill">Closed</span>';
+        $('#meetingStatus').html('<h4>Meeting status: ' + meetingStatusText + '</h4>');
 
     }
 
@@ -135,6 +148,7 @@
 
     return {
         patientDetails: renderPatientDetails,
+        meetingDetails: renderMeetingDetails,
         patients: renderPatients,
         questions: renderQuestions,
         questionOpen: renderQuestionOpen,

@@ -46,10 +46,25 @@ body {
     color: black;
 }
 
+.meeting-open {
+    background-color: lightgreen;
+    padding: 5px 15px 5px 15px;
+}
+
+
+.meeting-closed {
+    background-color: gray;
+    padding: 5px 15px 5px 15px;
+}
+
+    .meeting-open:hover ,.meeting-closed:hover {
+        cursor: pointer;
+        background-color: lightgray;
+    }
+
 #meetingCode span {
     background-color: white;
-    padding-left : 10px;
-    padding-right: 10px;
+    padding: 5px 15px 5px 15px;
 }
 
 /* Wrapping element */

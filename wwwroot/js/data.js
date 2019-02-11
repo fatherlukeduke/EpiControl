@@ -39,6 +39,14 @@
         return $.post('https://api.epivote.uk/vote/AddQuestion', { meetingPatientID: meetingPatientID, questionText: questionText });
     }
 
+    function openMeeting(meetingID) {
+        return $.post('https://api.epivote.uk/vote/OpenMeeting', { meetingID: meetingID });
+    }
+
+    function closeMeeting(meetingID) {
+        return $.post('https://api.epivote.uk/vote/CloseMeeting', { meetingID: meetingID });
+    }
+
     function sendTokenToServer(token) {
         return $.post('https://api.epivote.uk/vote/SetControlPanelToken/' + token );
     }
@@ -73,6 +81,8 @@
         getSelectedMeeting: getSelectedMeeting,
         addNewQuestion: addNewQuestion,
         addNewPatient: addNewPatient,
+        openMeeting: openMeeting,
+        closeMeeting: closeMeeting,
         sendTokenToServer: sendTokenToServer
     };
 

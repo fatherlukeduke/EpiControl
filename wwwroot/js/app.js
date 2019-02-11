@@ -1,6 +1,7 @@
 ﻿//***************************************************LAUNCHES APPLICATION AND CREATES EVENTS**************************************
 
 var ACTIVE_QUESTION;   //global to track if there is an active question
+var ACTIVE_MEETING_STATUS;   //global to track current meeting
 var AJAX_LOADER_TIMEOUT;  //global to track timeout timers
 var BASE_URL;  //guess what this is?
 
@@ -17,7 +18,7 @@ var APP = (function (data_api, render) {
                 //var html = '<option>Pick a meeting</option>';
                 var html = '';
                 data.forEach(d => {
-                    html += '<option  data-meeting-code="' + d.meetingCode +
+                    html += '<option data-meeting-status="' + d.meetingOpen  + '" data-meeting-code="' + d.meetingCode +
                         '" class="dropdown-item meeting-select" value="' + d.meetingID + '">' +
                         moment(d.meetingDate).format("DD/MM/YY  hh:mm") + '</option>';
                 });
@@ -35,16 +36,12 @@ var APP = (function (data_api, render) {
         $('body').on('change', '#meetingChoices', e => {
             let meetingDate = $('#meetingChoices option:selected').html();
             $('.question-panel').hide();
+
             if (!$('#meetingChoices').val()) {
                 $('.control-panel').hide();
+                ACTIVE_MEETING_STATUS = null;
             } else {
-                $('.control-panel').show();
-
-                let meetingDate = $('#meetingChoices option:selected').html();
-                $('#meetingDate').html('<h3 class="mr-2 mb-2 ml-2">Meeting date: ' + meetingDate + '</h3>');
-
-                let meetingCode = $('#meetingChoices option:selected').data('meeting-code');
-                $('#meetingCode').html('<h3>Meeting code: <span>' + meetingCode + '</span></h3>');
+                render.meetingDetails();
                 
                 data_api.getPatients($('#meetingChoices').val())
                     .then(patients => {
@@ -102,7 +99,7 @@ var APP = (function (data_api, render) {
         //select a patient
         //------------------------------------------------------------------
         $('body').on('click', '.pick-patient', e => {
-            $('.patient-details').hide('slow');
+            $('.patient-details div').css('opacity' , 0);
             $('.question-panel').show();
             $('.question-result').hide();
             $('.pick-patient').removeClass('selected-patient ');
@@ -112,7 +109,12 @@ var APP = (function (data_api, render) {
 
             data_api.getPatientDetails(patientID)
                 .then(patient => { return render.patientDetails(patient); })
-                .then(patient => data_api.getQuestionsForPatient(patient.meetingPatientID))
+                .then(patient => {
+                    AJAX_LOADER_TIMEOUT = setTimeout(function () {
+                        $('#questions').html('<h2>Loading...</h2>');
+                    }, 1000);
+                    return data_api.getQuestionsForPatient(patient.meetingPatientID);
+                })
                 .then(questions => render.questions(questions, meetingPatientID));
         });
 
@@ -132,7 +134,7 @@ var APP = (function (data_api, render) {
         $('body').on('click', '.question-row', e => {
             AJAX_LOADER_TIMEOUT = setTimeout(function () {
                 $('#score').html('<h2>Loading...</h2>');
-            }, 2000);
+            }, 1000);
             $('.question-result').show();
             let id = $(e.currentTarget).data('meeting-patient-question-id');
             $('.question-row').removeClass('selected-patient');
@@ -182,15 +184,36 @@ var APP = (function (data_api, render) {
             $('#newQuestionText').val('');
         });
 
+        //change meeting status
+        //------------------------------------------------------------------
+        $('body').on('click', '.change-status', e => {
+            if ($(e.currentTarget).html() == 'Open') {
+                $('#meetingStatusTitle').html('<h4>Close this meeting?</h4>');
+                $('.open-meeting').hide();
+                $('.close-meeting').show();
+            } else {
+                $('#meetingStatusTitle').html('<h4>Open this meeting?</h4>');
+                $('.close-meeting').hide();
+                $('.open-meeting').show();
+            }
+            $('#changeMeetingStatusDialog').modal();
+        })
+
+        $('body').on('click', '.open-meeting', e => {
+            data_api.openMeeting($('#meetingChoices').val());
+        })
+        $('body').on('click', '.close-meeting', e => {
+            data_api.closeMeeting($('#meetingChoices').val());
+        })
+
         //enlarge chart
         //------------------------------------------------------------------
         $('body').on('click', '.enlarge-chart', e => {
             $('#showFullResultsDialog').modal();
-
         })
 
 
-        //test only - reset all the questions
+        //TEST ONLY- reset all the questions
         //------------------------------------------------------------------
         $('body').on('click', '.open-all', e => {
             let id = $(e.currentTarget).data('meeting-id');
@@ -199,8 +222,6 @@ var APP = (function (data_api, render) {
         });
 
     }
-
-
 
     return {
         init: init
