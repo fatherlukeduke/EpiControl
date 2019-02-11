@@ -40,20 +40,24 @@
     }
 
     function renderPatients(patients) {
-        let meetingDate = $('#meetingChoices option:selected').html();
-        $('#meetingDate').html('<h5 class="mr-2 mb-2 ml-2">Meeting date: ' + meetingDate + '</h5>');
-        let html = '<h3 style="display:inline-block" class="ml-2 mr-4">Patients: </h3>';
-        $.each(patients, function (index) {
-            html += '<button class="btn ml-2 patient-button  btn-success pick-patient"  data-patient-id="' +
-                this.patientID + '"  data-meeting-patient-id="' +
-                this.meetingPatientID + '">' + this.hospitalNumber + ' </button>';
-        });
-        html += '</div>';
-        $('#patients').html(html);
-        $('#test').html('<span data-meeting-id="' + patients[0].meetingID + '" class="open-all mt-5 test" > TEST: reset meeting</span > ');
+        if (patients.length >0) {
 
-        return patients[0].meetingID;
+            let html = '<h3 style="display:inline-block" class="ml-2 mr-4">Patients: </h3>';
+            $.each(patients, function (index) {
+                html += '<button class="btn ml-2 patient-button  btn-success pick-patient"  data-patient-id="' +
+                    this.patientID + '"  data-meeting-patient-id="' +
+                    this.meetingPatientID + '">' + this.hospitalNumber + ' </button>';
+            });
+            html += '</div>';
+            $('#patients').html(html);
+            $('#test').html('<span data-meeting-id="' + patients[0].meetingID + '" class="open-all mt-5 test" > TEST: reset meeting</span > ');
 
+            return patients[0].meetingID;
+        } else {
+            $('#patients').html('<h4>No patients added</h4>');
+            return null;
+        }
+   
     }
 
     function renderQuestions(questions, meetingPatientID) {

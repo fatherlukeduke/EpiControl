@@ -17,9 +17,9 @@ var APP = (function (data_api, render) {
                 //var html = '<option>Pick a meeting</option>';
                 var html = '';
                 data.forEach(d => {
-                    html += '<option  data-meetingid="' + d.meetingID +
+                    html += '<option  data-meeting-code="' + d.meetingCode +
                         '" class="dropdown-item meeting-select" value="' + d.meetingID + '">' +
-                        moment(d.meetingDate).format("DD/MM/YY") + '</option>';
+                        moment(d.meetingDate).format("DD/MM/YY  hh:mm") + '</option>';
                 });
                 $('#meetingChoices').append(html);
             });
@@ -34,11 +34,18 @@ var APP = (function (data_api, render) {
         //------------------------------------------------------------------
         $('body').on('change', '#meetingChoices', e => {
             let meetingDate = $('#meetingChoices option:selected').html();
+            $('.question-panel').hide();
             if (!$('#meetingChoices').val()) {
                 $('.control-panel').hide();
             } else {
                 $('.control-panel').show();
 
+                let meetingDate = $('#meetingChoices option:selected').html();
+                $('#meetingDate').html('<h3 class="mr-2 mb-2 ml-2">Meeting date: ' + meetingDate + '</h3>');
+
+                let meetingCode = $('#meetingChoices option:selected').data('meeting-code');
+                $('#meetingCode').html('<h3>Meeting code: <span>' + meetingCode + '</span></h3>');
+                
                 data_api.getPatients($('#meetingChoices').val())
                     .then(patients => {
                         let meetingID = render.patients(patients, meetingDate);
@@ -96,6 +103,7 @@ var APP = (function (data_api, render) {
         //------------------------------------------------------------------
         $('body').on('click', '.pick-patient', e => {
             $('.patient-details').hide('slow');
+            $('.question-panel').show();
             $('.question-result').hide();
             $('.pick-patient').removeClass('selected-patient ');
             $(e.currentTarget).addClass('selected-patient');
@@ -113,7 +121,10 @@ var APP = (function (data_api, render) {
         $('body').on('click', '.open-vote', e => {
             var meetingPatientQuestionID = $(e.currentTarget).data('meeting-patient-question-id');
             data_api.openVoteForQuestion(meetingPatientQuestionID)
-                .then(render.questionOpen(meetingPatientQuestionID));
+                .then(question => {
+                    ACTIVE_QUESTION = question;
+                    render.questionOpen(meetingPatientQuestionID);
+                });
         });
 
         //select a question

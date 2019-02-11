@@ -46,6 +46,12 @@ body {
     color: black;
 }
 
+#meetingCode span {
+    background-color: white;
+    padding-left : 10px;
+    padding-right: 10px;
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
