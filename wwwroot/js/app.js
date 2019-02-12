@@ -1,7 +1,7 @@
 ﻿//***************************************************LAUNCHES APPLICATION AND CREATES EVENTS**************************************
 
 var ACTIVE_QUESTION;   //global to track if there is an active question
-var ACTIVE_MEETING_STATUS;   //global to track current meeting
+var CURRENT_MEETING;   //global to track current meeting
 var AJAX_LOADER_TIMEOUT;  //global to track timeout timers
 var BASE_URL;  //guess what this is?
 
@@ -39,9 +39,13 @@ var APP = (function (data_api, render) {
 
             if (!$('#meetingChoices').val()) {
                 $('.control-panel').hide();
-                ACTIVE_MEETING_STATUS = null;
+                CURRENT_MEETING = null;
             } else {
-                render.meetingDetails();
+                data_api.getMeeting($('#meetingChoices').val())
+                    .then(meeting => {
+                        CURRENT_MEETING = meeting;
+                        render.meetingDetails(meeting);
+                    });
                 
                 data_api.getPatients($('#meetingChoices').val())
                     .then(patients => {
@@ -156,13 +160,11 @@ var APP = (function (data_api, render) {
                 .then((results) => {
                     $('#results').show();
                     render.chart(results.chartData);
-                    //render.chart(results.chartData, 'bigChart');
                     $('#score').html('<h2>Average score: ' + results.averageScore.toFixed(1) + '</h2>');
                     $('.question-row, .pick-patient').removeClass('question-disabled');
-                    $('.question-row, .pick-patient').prop('disabled', false);
+                    $('.question-row, .pick-patient, .change-status').prop('disabled', false);
                     $('.new-question').prop('disabled', false);
                     $('#addNewPatient').prop('disabled', false);
-                    // data_api.getQuestionsForPatient(meetingPatientID);
                 });
         });
 
@@ -187,7 +189,7 @@ var APP = (function (data_api, render) {
         //change meeting status
         //------------------------------------------------------------------
         $('body').on('click', '.change-status', e => {
-            if ($(e.currentTarget).html() == 'Open') {
+            if ($(e.currentTarget).html() === 'Open') {
                 $('#meetingStatusTitle').html('<h4>Close this meeting?</h4>');
                 $('.open-meeting').hide();
                 $('.close-meeting').show();
@@ -197,20 +199,44 @@ var APP = (function (data_api, render) {
                 $('.open-meeting').show();
             }
             $('#changeMeetingStatusDialog').modal();
-        })
+        });
 
         $('body').on('click', '.open-meeting', e => {
-            data_api.openMeeting($('#meetingChoices').val());
-        })
+            let meetingID = $('#meetingChoices').val();
+            $('#changeMeetingStatusDialog').modal('hide');
+            data_api.openMeeting(meetingID)
+                .then(meeting => {
+                    if (!meeting) {
+                        return data_api.getMeeting(meetingID);
+                    } else {  //another meeting already open
+                        let meetingDateText = moment(meeting.meetingDate).format("DD/MM/YY");
+                        $('#system-error').html('<h3>There is already a meeting open for ' + meetingDateText + ' please close this first. </h3>');
+                        $('#system-error').show('slow');
+                        setTimeout(function () { $('#system-error').hide('slow'); }, 5000);
+                    }
+                 })
+                .then(meeting => {
+                    CURRENT_MEETING = meeting;
+                    render.meetingDetails(meeting);
+                });
+        });
+
         $('body').on('click', '.close-meeting', e => {
-            data_api.closeMeeting($('#meetingChoices').val());
-        })
+            let meetingID = $('#meetingChoices').val();
+            $('#changeMeetingStatusDialog').modal('hide');
+            data_api.closeMeeting(meetingID)
+                .then(() => { return data_api.getMeeting(meetingID); })
+                .then(meeting => {
+                    CURRENT_MEETING = meeting.meetingDetails;
+                    render.meetingDetails(meeting);
+                });
+        });
 
         //enlarge chart
         //------------------------------------------------------------------
         $('body').on('click', '.enlarge-chart', e => {
             $('#showFullResultsDialog').modal();
-        })
+        });
 
 
         //TEST ONLY- reset all the questions

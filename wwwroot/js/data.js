@@ -19,12 +19,16 @@
         return $.getJSON('https://api.epivote.uk/vote/Getmeetings');
     }
 
+    function getMeeting(meetingID) {
+        return $.getJSON('https://api.epivote.uk/vote/Getmeeting/' + meetingID);
+    }
+
     function getPatients(meetingID) {
         return $.getJSON(BASE_URL  + '/GetPatients/' + meetingID);
     }
 
     function getSelectedMeeting(meetingID) {
-        return $.getJSON('https://api.epivote.uk/vote/Getmeeting/' + meetingID);
+        return $.getJSON('https://api.epivote.uk/vote/GetMeeting/' + meetingID);
     }
 
     function getQuestionsForPatient(meetingPatientID) {
@@ -40,11 +44,11 @@
     }
 
     function openMeeting(meetingID) {
-        return $.post('https://api.epivote.uk/vote/OpenMeeting', { meetingID: meetingID });
+        return $.post('https://api.epivote.uk/vote/OpenMeeting/' + meetingID);
     }
 
     function closeMeeting(meetingID) {
-        return $.post('https://api.epivote.uk/vote/CloseMeeting', { meetingID: meetingID });
+        return $.post('https://api.epivote.uk/vote/CloseMeeting/' + meetingID );
     }
 
     function sendTokenToServer(token) {
@@ -83,6 +87,7 @@
         addNewPatient: addNewPatient,
         openMeeting: openMeeting,
         closeMeeting: closeMeeting,
+        getMeeting: getMeeting,
         sendTokenToServer: sendTokenToServer
     };
 

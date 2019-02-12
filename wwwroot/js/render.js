@@ -28,7 +28,7 @@
         $('#score').hide();
         $('#results').hide();
         $('.question-row, .pick-patient').not('.selected-patient').addClass('question-disabled');
-        $('.question-row, .pick-patient').prop('disabled', true);
+        $('.question-row, .pick-patient, .change-status').prop('disabled', true);
         $('.new-question').prop('disabled', true);
         $('#addNewPatient').prop('disabled', true);
         var html = '<h3>Question open for voting</h3>';
@@ -87,14 +87,18 @@
 
     function renderQuestionResult(question) {
         clearTimeout(AJAX_LOADER_TIMEOUT);
-
+        let html = '';
         if (!question.votingComplete) {
             $('#score').hide();
             $('#results').hide();
-            var html = '<h3>This question has not been voted on</h3>';
-            html += '<button data-meetingid="' + this.meetingID + '" data-meeting-patient-question-id="' +
-                question.meetingPatientQuestionID + '" data-meeting-patient-id="' + question.meetingPatientID +
-                '" class="btn btn-success btn-block mt-1 open-vote">Open voting</button>';
+            if (CURRENT_MEETING.meetingOpen) {
+                html = '<h3>This question has not been voted on</h3>';
+                html += '<button data-meetingid="' + this.meetingID + '" data-meeting-patient-question-id="' +
+                    question.meetingPatientQuestionID + '" data-meeting-patient-id="' + question.meetingPatientID +
+                    '" class="btn btn-success btn-block mt-1 open-vote">Open voting</button>';
+            } else {
+                html = '<h3>This meeting is not open for voting</h3>';
+            }
             $('#score').html(html).fadeIn('slow');
    
             if (question.votingOpen) {
@@ -103,7 +107,7 @@
         } else {
             data_api.getResults(question.meetingPatientQuestionID)
                 .then(data => {
-                    let html = '<h2>Average score: ' + data.averageScore.toFixed(1) + '</h2>';
+                    html = '<h2>Average score: ' + data.averageScore.toFixed(1) + '</h2>';
                     $('#score').html(html);
                     $('#bigScore').html(html);
                     $('#results').show();
@@ -116,14 +120,13 @@
     function renderMeetingDetails(meeting) {
         $('.control-panel').show();
 
-        let meetingDate = $('#meetingChoices option:selected').html();
+        let meetingDate = moment(meeting.meetingDate).format('DD/MM/YY hh:mm');
         $('#meetingDate').html('<h4>Meeting date: ' + meetingDate + '</h4>');
 
-        let meetingCode = $('#meetingChoices option:selected').data('meeting-code');
+        let meetingCode = meeting.meetingCode;
         $('#meetingCode').html('<h4>Meeting code: <span class="rounded-pill">' + meetingCode + '</span></h4>');
 
-        let meetingStatus = $('#meetingChoices option:selected').data('meeting-status');
-        ACTIVE_MEETING_STATUS = meetingStatus;
+        let meetingStatus = meeting.meetingOpen;
         let meetingStatusText = meetingStatus ? '<span class="meeting-open change-status rounded-pill">Open</span>'
                                                 : '<span class="meeting-closed  change-status rounded-pill">Closed</span>';
         $('#meetingStatus').html('<h4>Meeting status: ' + meetingStatusText + '</h4>');
