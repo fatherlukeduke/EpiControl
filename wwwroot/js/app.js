@@ -239,6 +239,14 @@ var APP = (function (data_api, render) {
         });
 
 
+        //enlarge meeting code
+        //------------------------------------------------------------------
+        $('body').on('click', '#meetingCode', e => {
+            $('#largeMeetingCode').html($(e.currentTarget).find('span').html())
+            $('#showMeetingCodeDialog').modal();
+        });
+
+
         //TEST ONLY- reset all the questions
         //------------------------------------------------------------------
         $('body').on('click', '.open-all', e => {

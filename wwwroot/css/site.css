@@ -67,9 +67,13 @@ body {
     padding: 5px 15px 5px 15px;
 }
 
-/* Wrapping element */
-/* Set some basic padding to keep content from hitting the edges */
-.body-content {
+    #meetingCode span:hover {
+        cursor: pointer;
+        background-color: lightgray;
+    }
+    /* Wrapping element */
+    /* Set some basic padding to keep content from hitting the edges */
+    .body-content {
     padding-left: 15px;
     padding-right: 15px;
 }

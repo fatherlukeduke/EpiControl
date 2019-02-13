@@ -71,7 +71,6 @@
     }
 
 
-
     return {
         getResults: getResults,
         getActiveQuestion: getActiveQuestion,
