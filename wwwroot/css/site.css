@@ -16,9 +16,14 @@ body {
     background-color:bisque;
 }
 
-.question-disabled{
+.element-disabled{
     background-color: gray !important;
     cursor:auto !important;
+}
+
+.meeting-status-disabled {
+    cursor: auto !important;
+    pointer-events : none;
 }
 
 .meeting-button {
