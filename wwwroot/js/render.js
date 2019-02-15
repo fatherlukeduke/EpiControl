@@ -27,7 +27,7 @@
         let voteCount = ACTIVE_QUESTION ? ACTIVE_QUESTION.voteCount : '';
         $('#score').hide();
         $('#results').hide();
-        $('.question-row, .pick-patient').not('.selected-patient').addClass('element - disabled');
+        $('.question-row, .pick-patient').not('.selected-patient').addClass('element-disabled');
         $('.change-status').addClass('meeting-status-disabled');
         $('.question-row, .pick-patient, .change-status').prop('disabled', true);
         $('.new-question').prop('disabled', true);

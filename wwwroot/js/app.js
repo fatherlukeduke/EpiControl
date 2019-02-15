@@ -161,7 +161,7 @@ var APP = (function (data_api, render) {
                     $('#results').show();
                     render.chart(results.chartData);
                     $('#score').html('<h2>Average score: ' + results.averageScore.toFixed(1) + '</h2>');
-                    $('.question-row, .pick-patient').removeClass('question-disabled');
+                    $('.question-row, .pick-patient').removeClass('element-disabled');
                     $('.change-status').removeClass('meeting-status-disabled');
                     $('.question-row, .pick-patient, .change-status').prop('disabled', false);
                     $('.new-question').prop('disabled', false);
