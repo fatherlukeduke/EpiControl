@@ -16,17 +16,12 @@
     }
 
     function getMeetings() {
-        return $.ajax({
+         $.ajax({
             url: 'https://api.epivote.uk/vote/Getmeetings',
             type: 'GET',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-            dataType: 'json'
-            //error: function (xhr, status, error) {
-            //    return xhr.responseText;
-            //}
+            dataType: 'json'           
         })
-
-        //return $.getJSON('https://api.epivote.uk/vote/Getmeetings');
     }
 
     function getMeeting(meetingID) {

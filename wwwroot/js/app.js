@@ -12,7 +12,7 @@ var APP = (function (data_api, render) {
     function showError(message) {
         $('#system-error').html('<h3>' + message + '</h3>');
         $('#system-error').show('slow');
-        setTimeout(function () { $('#system-error').hide('slow'); }, 5000);
+        setTimeout(function () { $('#system-error').hide('slow'); }, 7000);
     }
 
     //initialise this bad boy.  Authenticate, then fetch future meetings
