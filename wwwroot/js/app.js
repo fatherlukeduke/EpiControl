@@ -7,23 +7,40 @@ var BASE_URL;  //guess what this is?
 
 var APP = (function (data_api, render) {
 
+    //display error message
+    //---------------------------------------------------------------------------
+    function showError(message) {
+        $('#system-error').html('<h3>' + message + '</h3>');
+        $('#system-error').show('slow');
+        setTimeout(function () { $('#system-error').hide('slow'); }, 5000);
+    }
+
+    //initialise this bad boy.  Authenticate, then fetch future meetings
+    //---------------------------------------------------------------------------
     function init(baseUrl) {
 
         BASE_URL = baseUrl;
 
-        data_api.getMeetings()
+        data_api.AuthenticateWithAPI()
+            .then(() => {
+                return data_api.getMeetings()
+            })
             .then(data => {
                 $('.meeting-loader').hide();
                 $('.meeting-choice').show();
                 //var html = '<option>Pick a meeting</option>';
                 var html = '';
                 data.forEach(d => {
-                    html += '<option data-meeting-status="' + d.meetingOpen  + '" data-meeting-code="' + d.meetingCode +
+                    html += '<option data-meeting-status="' + d.meetingOpen + '" data-meeting-code="' + d.meetingCode +
                         '" class="dropdown-item meeting-select" value="' + d.meetingID + '">' +
                         moment(d.meetingDate).format("DD/MM/YY  hh:mm") + '</option>';
                 });
                 $('#meetingChoices').append(html);
-            });
+            })
+            .catch( (xhr, status, error) => {
+                showError('There was a problem processig the server request')
+                console.log(xhr);
+            })
 
         registerEvents();
     }
@@ -46,7 +63,7 @@ var APP = (function (data_api, render) {
                         CURRENT_MEETING = meeting;
                         render.meetingDetails(meeting);
                     });
-                
+
                 data_api.getPatients($('#meetingChoices').val())
                     .then(patients => {
                         let meetingID = render.patients(patients, meetingDate);
@@ -103,7 +120,7 @@ var APP = (function (data_api, render) {
         //select a patient
         //------------------------------------------------------------------
         $('body').on('click', '.pick-patient', e => {
-            $('.patient-details div').css('opacity' , 0);
+            $('.patient-details div').css('opacity', 0);
             $('.question-panel').show();
             $('.question-result').hide();
             $('.pick-patient').removeClass('selected-patient ');
@@ -211,11 +228,11 @@ var APP = (function (data_api, render) {
                         return data_api.getMeeting(meetingID);
                     } else {  //another meeting already open
                         let meetingDateText = moment(meeting.meetingDate).format("DD/MM/YY");
-                        $('#system-error').html('<h3>There is already a meeting open for ' + meetingDateText + ' please close this first. </h3>');
-                        $('#system-error').show('slow');
-                        setTimeout(function () { $('#system-error').hide('slow'); }, 5000);
+                        showError('There is already a meeting open for ' + meetingDateText + ' please close this first.');
+                        //$('#system-error').show('slow');
+                        //setTimeout(function () { $('#system-error').hide('slow'); }, 5000);
                     }
-                 })
+                })
                 .then(meeting => {
                     CURRENT_MEETING = meeting;
                     render.meetingDetails(meeting);
@@ -246,6 +263,7 @@ var APP = (function (data_api, render) {
             $('#largeMeetingCode').html($(e.currentTarget).find('span').html())
             $('#showMeetingCodeDialog').modal();
         });
+
 
 
         //TEST ONLY- reset all the questions
