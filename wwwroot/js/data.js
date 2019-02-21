@@ -1,10 +1,21 @@
 ﻿var DATA_API = (function () {
     function getResults(meetingPatientQuestionID) {
-        return $.getJSON('https://api.epivote.uk/vote/GetResults/' + meetingPatientQuestionID);
+         return $.ajax({
+            url: 'https://api.epivote.uk/vote/GetResults/' + meetingPatientQuestionID,
+            type: 'GET',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            dataType: 'json'
+        });
     }
 
     function getActiveQuestion(meetingID) {
-        return $.getJSON('https://api.epivote.uk/vote/GetCurrentQuestionForMeeting/' + meetingID);
+        
+        return $.ajax({
+            url: 'https://api.epivote.uk/vote/GetCurrentQuestionForMeeting/' + meetingID,
+            type: 'GET',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            dataType: 'json'
+        });
     }
 
     function completeVoteForQuestion(meetingPatientQuestionID) {
@@ -20,12 +31,18 @@
             url: 'https://api.epivote.uk/vote/Getmeetings',
             type: 'GET',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
-            dataType: 'json'           
-        })
+            dataType: 'json'
+        });
     }
 
     function getMeeting(meetingID) {
-        return $.getJSON('https://api.epivote.uk/vote/Getmeeting/' + meetingID);
+        
+        return $.ajax({
+            url:' https://api.epivote.uk/vote/Getmeeting/' + meetingID,
+            type: 'GET',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            dataType: 'json'
+        });
     }
 
     function getPatients(meetingID) {
@@ -37,11 +54,21 @@
     }
 
     function getQuestionsForPatient(meetingPatientID) {
-        return $.getJSON('https://api.epivote.uk/vote/GetQuestionsForPatient/' + meetingPatientID);
+        return $.ajax({
+            url: 'https://api.epivote.uk/vote/GetQuestionsForPatient/' + meetingPatientID,
+            type: 'GET',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            dataType: 'json'
+        });
     }
 
-    function getQuestion(meetingPatientQuestionID) {
-        return $.getJSON('https://api.epivote.uk/vote/GetQuestion/' + meetingPatientQuestionID);
+    function getQuestion(meetingPatientQuestionID) { 
+        return $.ajax({
+            url: 'https://api.epivote.uk/vote/GetQuestion/' + meetingPatientQuestionID,
+            type: 'GET',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            dataType: 'json'
+        });
     }
 
     function addNewQuestion(meetingPatientID, questionText) {
@@ -49,25 +76,37 @@
     }
 
     function openMeeting(meetingID) {
-        return $.post('https://api.epivote.uk/vote/OpenMeeting/' + meetingID);
+        return $.ajax({
+            url: 'https://api.epivote.uk/vote/OpenMeeting/' + meetingID,
+            type: 'POST',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            dataType: 'json'
+        });
     }
 
     function closeMeeting(meetingID) {
-        return $.post('https://api.epivote.uk/vote/CloseMeeting/' + meetingID );
+        return $.ajax({
+            url: 'https://api.epivote.uk/vote/CloseMeeting/' + meetingID,
+            type: 'POST',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            dataType: 'json'
+        });
     }
 
-    function sendTokenToServer(token) {
-        return $.post('https://api.epivote.uk/vote/SetControlPanelToken/' + token );
+    function sendMessagingTokenToServer(token) {
+        return $.ajax({
+            url: 'https://api.epivote.uk/vote/SetControlPanelToken/' + token,
+            type: 'POST',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+            dataType: 'json'
+        });
     }
 
     function AuthenticateWithAPI() {
         return $.post('https://api.epivote.uk/user/registerClient/' + '0592', token => {
             localStorage.setItem('token', token.token.rawData);
-            console.log(token.token.rawData)
-            //$.ajaxSetup({
-            //    headers: { "Authorization": "Bearer " + token.token.rawData }
-            //})
-        })
+            console.log(token.token.rawData);
+        });
     }
 
     function addNewPatient(hospitalNumber, firstname, surname, dob, meetingID) {
@@ -86,8 +125,7 @@
     }
 
     function setHeader(xhr) {
-        xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('token'));
-        
+        xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('token'));      
     }
 
     return {
@@ -106,7 +144,7 @@
         openMeeting: openMeeting,
         closeMeeting: closeMeeting,
         getMeeting: getMeeting,
-        sendTokenToServer: sendTokenToServer,
+        sendTokenToServer: sendMessagingTokenToServer,
         AuthenticateWithAPI: AuthenticateWithAPI
     };
 

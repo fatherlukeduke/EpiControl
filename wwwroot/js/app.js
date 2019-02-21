@@ -23,7 +23,7 @@ var APP = (function (data_api, render) {
 
         data_api.AuthenticateWithAPI()
             .then(() => {
-                return data_api.getMeetings()
+                return data_api.getMeetings();
             })
             .then(data => {
                 $('.meeting-loader').hide();
@@ -37,10 +37,10 @@ var APP = (function (data_api, render) {
                 });
                 $('#meetingChoices').append(html);
             })
-            .catch( (xhr, status, error) => {
-                showError('There was a problem processing the server request')
+            .catch((xhr, status, error) => {
+                showError('There was a problem processing the server request');
                 console.log(xhr);
-            })
+            });
 
         registerEvents();
     }
