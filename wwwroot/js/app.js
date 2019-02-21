@@ -18,37 +18,39 @@ var APP = (function (data_api, render) {
     //initialise this bad boy.  Authenticate, then fetch future meetings
     //---------------------------------------------------------------------------
     function init(baseUrl) {
+        return new Promise(resolve => {
+            BASE_URL = baseUrl;
 
-        BASE_URL = baseUrl;
-
-        data_api.AuthenticateWithAPI()
-            .then(() => {
-                return data_api.getMeetings();
-            })
-            .then(data => {
-                $('.meeting-loader').hide();
-                $('.meeting-choice').show();
-                //var html = '<option>Pick a meeting</option>';
-                var html = '';
-                data.forEach(d => {
-                    html += '<option data-meeting-status="' + d.meetingOpen + '" data-meeting-code="' + d.meetingCode +
-                        '" class="dropdown-item meeting-select" value="' + d.meetingID + '">' +
-                        moment(d.meetingDate).format("DD/MM/YY  hh:mm") + '</option>';
+            data_api.AuthenticateWithAPI()
+                .then(() => {
+                    return data_api.getMeetings();
+                })
+                .then(data => {
+                    $('.meeting-loader').hide();
+                    $('.meeting-choice').show();
+                    var html = '';
+                    data.forEach(d => {
+                        html += '<option data-meeting-status="' + d.meetingOpen + '" data-meeting-code="' + d.meetingCode +
+                            '" class="dropdown-item meeting-select" value="' + d.meetingID + '">' +
+                            moment(d.meetingDate).format("DD/MM/YY  hh:mm") + '</option>';
+                    });
+                    $('#meetingChoices').append(html);
+                })
+                .catch(xhr => {
+                    showError('There was a problem processing the server request');
+                    console.log(xhr);
                 });
-                $('#meetingChoices').append(html);
-            })
-            .catch((xhr, status, error) => {
-                showError('There was a problem processing the server request');
-                console.log(xhr);
-            });
 
-        registerEvents();
+            registerEvents();
+
+        })
+
     }
 
     //click events and flow
     function registerEvents() {
 
-        //get patients for meeting
+        //get meeting details and patients for selected
         //------------------------------------------------------------------
         $('body').on('change', '#meetingChoices', e => {
             let meetingDate = $('#meetingChoices option:selected').html();
@@ -62,7 +64,8 @@ var APP = (function (data_api, render) {
                     .then(meeting => {
                         CURRENT_MEETING = meeting;
                         render.meetingDetails(meeting);
-                    });
+                    })
+                    .catch(err => console.log('Error: ' + JSON.stringify(err)));
 
                 data_api.getPatients($('#meetingChoices').val())
                     .then(patients => {
@@ -136,7 +139,8 @@ var APP = (function (data_api, render) {
                     }, 1000);
                     return data_api.getQuestionsForPatient(patient.meetingPatientID);
                 })
-                .then(questions => render.questions(questions, meetingPatientID));
+                .then(questions => render.questions(questions, meetingPatientID))
+                .catch(err => console.log('Error: ' + JSON.stringify(err)));
         });
 
         //open vote
@@ -147,7 +151,8 @@ var APP = (function (data_api, render) {
                 .then(question => {
                     ACTIVE_QUESTION = question;
                     render.questionOpen(meetingPatientQuestionID);
-                });
+                })
+                .catch(err => console.log('Error: ' + JSON.stringify(err)));
         });
 
         //select a question
@@ -183,18 +188,20 @@ var APP = (function (data_api, render) {
                     $('.question-row, .pick-patient, .change-status').prop('disabled', false);
                     $('.new-question').prop('disabled', false);
                     $('#addNewPatient').prop('disabled', false);
-                });
+                })
+                .catch(err => console.log('Error: ' + JSON.stringify(err)));
         });
 
 
         //add new question
         //------------------------------------------------------------------
-        $('body').on('click', '#submitNewQuesion', e => {
+        $('body').on('click', '#submitNewQuestion', e => {
             const meetingPatientID = $('.selected-patient').data('meeting-patient-id');
             const questionText = $('#newQuestionText').val();
             data_api.addNewQuestion(meetingPatientID, questionText)
                 .then(newQuestion => data_api.getQuestionsForPatient(meetingPatientID))
-                .then((questions) => render.questions(questions));
+                .then((questions) => render.questions(questions))
+                .catch(err => console.log('Error: ' + JSON.stringify(err)));
             $('#addNewQuestionDialog').modal('hide');
         });
 
@@ -229,14 +236,13 @@ var APP = (function (data_api, render) {
                     } else {  //another meeting already open
                         let meetingDateText = moment(meeting.meetingDate).format("DD/MM/YY");
                         showError('There is already a meeting open for ' + meetingDateText + ' please close this first.');
-                        //$('#system-error').show('slow');
-                        //setTimeout(function () { $('#system-error').hide('slow'); }, 5000);
                     }
                 })
                 .then(meeting => {
                     CURRENT_MEETING = meeting;
                     render.meetingDetails(meeting);
-                });
+                })
+                .catch(err => console.log('Error: ' + JSON.stringify(err)));
         });
 
         $('body').on('click', '.close-meeting', e => {
@@ -247,7 +253,8 @@ var APP = (function (data_api, render) {
                 .then(meeting => {
                     CURRENT_MEETING = meeting.meetingDetails;
                     render.meetingDetails(meeting);
-                });
+                })
+                .catch(err => console.log('Error: ' + JSON.stringify(err)));
         });
 
         //enlarge chart
@@ -265,13 +272,18 @@ var APP = (function (data_api, render) {
         });
 
 
-
         //TEST ONLY- reset all the questions
         //------------------------------------------------------------------
         $('body').on('click', '.open-all', e => {
             let id = $(e.currentTarget).data('meeting-id');
-            $.post('https://api.epivote.uk/vote/ResetMeeting/' + id)
-                .then(() => data_api.getQuestionsForPatient(id));
+            $.ajax({
+                url: 'https://api.epivote.uk/vote/ResetMeeting/' + id,
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                type: 'POST'
+            })
+                .done(() => console.log('Voting reset for all questions in this meeting'))
+                .catch(err => console.log('Error: ' + JSON.stringify(err)));
+
         });
 
     }
