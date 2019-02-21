@@ -38,7 +38,7 @@ var APP = (function (data_api, render) {
                 $('#meetingChoices').append(html);
             })
             .catch( (xhr, status, error) => {
-                showError('There was a problem processig the server request')
+                showError('There was a problem processing the server request')
                 console.log(xhr);
             })
 

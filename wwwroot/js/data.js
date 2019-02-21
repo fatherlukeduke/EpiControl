@@ -16,7 +16,7 @@
     }
 
     function getMeetings() {
-         $.ajax({
+     return $.ajax({
             url: 'https://api.epivote.uk/vote/Getmeetings',
             type: 'GET',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
