@@ -1,4 +1,5 @@
 ﻿var DATA_API = (function () {
+
     function getResults(meetingPatientQuestionID) {
          return $.ajax({
             url: 'https://api.epivote.uk/vote/GetResults/' + meetingPatientQuestionID,
@@ -107,9 +108,10 @@
         });
     }
 
+    //authenticate with the web api
     function AuthenticateWithAPI() {
         return $.ajax({
-            url: 'https://api.epivote.uk/user/registerClient/0592',
+            url: 'https://api.epivote.uk/user/registerClient',
             type: 'POST',
             data: { ActivationCode: '0592' },
             done: ( token => localStorage.setItem('token', token.token.rawData) )
