@@ -109,10 +109,10 @@
 
     function AuthenticateWithAPI() {
         return $.ajax({
-            url: 'https://api.epivote.uk/user/registerClient/0592',
+            url: 'https://api.epivote.uk/user/registerClient',
             type: 'POST',
             data: { ActivationCode: '0592' },
-            done: ( token => localStorage.setItem('token', token.token.rawData) )
+            done: (token => { localStorage.setItem('token', token.token.rawData) } )
         });
     }
 

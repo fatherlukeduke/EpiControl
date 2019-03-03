@@ -125,11 +125,11 @@
         $('#meetingDate').html('<h4>Meeting date: ' + meetingDate + '</h4>');
 
         let meetingCode = meeting.meetingCode;
-        $('#meetingCode').html('<h4>Meeting code: <span class="rounded-pill">' + meetingCode + '</span></h4>');
+        $('#meetingCode').html('<h4>Meeting code: <span class="rounded">' + meetingCode + '</span></h4>');
 
         let meetingStatus = meeting.meetingOpen;
-        let meetingStatusText = meetingStatus ? '<span class="meeting-open change-status rounded-pill">Open</span>'
-                                                : '<span class="meeting-closed  change-status rounded-pill">Closed</span>';
+        let meetingStatusText = meetingStatus ? '<span class="meeting-open change-status rounded">Open</span>'
+                                                : '<span class="meeting-closed  change-status rounded">Closed</span>';
         $('#meetingStatus').html('<h4>Meeting status: ' + meetingStatusText + '</h4>');
 
     }

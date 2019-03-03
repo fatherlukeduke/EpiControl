@@ -43,7 +43,7 @@ var APP = (function (data_api, render) {
 
             registerEvents();
 
-        })
+        });
 
     }
 
@@ -236,13 +236,14 @@ var APP = (function (data_api, render) {
                     } else {  //another meeting already open
                         let meetingDateText = moment(meeting.meetingDate).format("DD/MM/YY");
                         showError('There is already a meeting open for ' + meetingDateText + ' please close this first.');
+                        throw new Error('Meeting already open');
                     }
                 })
                 .then(meeting => {
                     CURRENT_MEETING = meeting;
                     render.meetingDetails(meeting);
                 })
-                .catch(err => console.log('Error: ' + JSON.stringify(err)));
+                .catch(err => console.log('Error: ' + err));
         });
 
         $('body').on('click', '.close-meeting', e => {
