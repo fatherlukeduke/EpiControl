@@ -92,7 +92,7 @@
         if (!question.votingComplete) {
             $('#score').hide();
             $('#results').hide();
-            if (CURRENT_MEETING.meetingOpen) {
+            if ( CURRENT_MEETING && CURRENT_MEETING.meetingOpen) {
                 html = '<h3>This question has not been voted on</h3>';
                 html += '<button data-meetingid="' + this.meetingID + '" data-meeting-patient-question-id="' +
                     question.meetingPatientQuestionID + '" data-meeting-patient-id="' + question.meetingPatientID +
@@ -125,11 +125,11 @@
         $('#meetingDate').html('<h4>Meeting date: ' + meetingDate + '</h4>');
 
         let meetingCode = meeting.meetingCode;
-        $('#meetingCode').html('<h4>Meeting code: <span class="rounded-pill">' + meetingCode + '</span></h4>');
+        $('#meetingCode').html('<h4>Meeting code: <span class="rounded">' + meetingCode + '</span></h4>');
 
         let meetingStatus = meeting.meetingOpen;
-        let meetingStatusText = meetingStatus ? '<span class="meeting-open change-status rounded-pill">Open</span>'
-                                                : '<span class="meeting-closed  change-status rounded-pill">Closed</span>';
+        let meetingStatusText = meetingStatus ? '<span class="meeting-open change-status rounded">Open</span>'
+                                                : '<span class="meeting-closed  change-status rounded">Closed</span>';
         $('#meetingStatus').html('<h4>Meeting status: ' + meetingStatusText + '</h4>');
 
     }
