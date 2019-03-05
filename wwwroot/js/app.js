@@ -161,6 +161,7 @@ var APP = (function (data_api, render) {
             AJAX_LOADER_TIMEOUT = setTimeout(function () {
                 $('#score').html('<h2>Loading...</h2>');
             }, 1000);
+            $('#results').hide();
             $('.question-result').show();
             let id = $(e.currentTarget).data('meeting-patient-question-id');
             $('.question-row').removeClass('selected-patient');
