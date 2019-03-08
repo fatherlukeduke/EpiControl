@@ -92,7 +92,7 @@
         if (!question.votingComplete) {
             $('#score').hide();
             $('#results').hide();
-            if (CURRENT_MEETING.meetingOpen) {
+            if ( CURRENT_MEETING && CURRENT_MEETING.meetingOpen) {
                 html = '<h3>This question has not been voted on</h3>';
                 html += '<button data-meetingid="' + this.meetingID + '" data-meeting-patient-question-id="' +
                     question.meetingPatientQuestionID + '" data-meeting-patient-id="' + question.meetingPatientID +

@@ -3,7 +3,7 @@
 var ACTIVE_QUESTION;   //global to track if there is an active question
 var CURRENT_MEETING;   //global to track current meeting
 var AJAX_LOADER_TIMEOUT;  //global to track timeout timers
-var BASE_URL;  //guess what this is?
+var URLS;  //resolved URLs
 
 var APP = (function (data_api, render) {
 
@@ -17,9 +17,9 @@ var APP = (function (data_api, render) {
 
     //initialise this bad boy.  Authenticate, then fetch future meetings
     //---------------------------------------------------------------------------
-    function init(baseUrl) {
+    function init(urls) {
         return new Promise(resolve => {
-            BASE_URL = baseUrl;
+            URLS = urls;
 
             data_api.AuthenticateWithAPI()
                 .then(() => {
@@ -69,6 +69,7 @@ var APP = (function (data_api, render) {
 
                 data_api.getPatients($('#meetingChoices').val())
                     .then(patients => {
+                        $('#patients').html('<h2>Loading.....</h2>')
                         let meetingID = render.patients(patients, meetingDate);
                         data_api.getActiveQuestion(meetingID)
                             .then(data => {
@@ -161,12 +162,13 @@ var APP = (function (data_api, render) {
             AJAX_LOADER_TIMEOUT = setTimeout(function () {
                 $('#score').html('<h2>Loading...</h2>');
             }, 1000);
+            $('#results').hide();
             $('.question-result').show();
             let id = $(e.currentTarget).data('meeting-patient-question-id');
             $('.question-row').removeClass('selected-patient');
             $('.selected-arrow').remove();
             $(e.currentTarget).addClass('selected-patient');
-            $(e.currentTarget).append('<img style="width:30px;float:right" src="' + BASE_URL + '/open-iconic/svg/arrow-thick-right.svg" class="selected-arrow">');
+            $(e.currentTarget).append('<img style="width:30px;float:right" src="' + './open-iconic/svg/arrow-thick-right.svg" class="selected-arrow">');
             data_api.getQuestion(id)
                 .then(data => {
                     render.questionResult(data);

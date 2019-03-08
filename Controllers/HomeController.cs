@@ -32,7 +32,7 @@ namespace EpiControl.Controllers
             return View();
         }
 
-        [Route("GetPatients/{meetingID}")]
+        [Route("home/GetPatients/{meetingID}")]
         public ActionResult<List<Patient>> GetPatients(int meetingID)
         {
 
@@ -48,7 +48,7 @@ namespace EpiControl.Controllers
             }
         }
 
-        [Route("GetPatientDetails/{patientID}")]
+        [Route("home/GetPatientDetails/{patientID}")]
         public async Task<ActionResult<Patient>> GetPatientDetails(int patientID)
         {
             try
@@ -81,7 +81,7 @@ namespace EpiControl.Controllers
         }
 
         [HttpPost]
-        [Route("AddPatient")]
+        [Route("home/AddPatient")]
         public async Task<ActionResult<Patient>> AddPatient(int hospitalNumber, string surname, string firstname, DateTime DOB, int meetingID)
         {
            
