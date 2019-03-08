@@ -121,7 +121,7 @@
     //***************LOCAL SYSTEM DATA CALLS***********************************
     //**************************************************************************
     function addNewPatient(hospitalNumber, firstname, surname, dob, meetingID) {
-        return $.post(BASE_URL +'/AddPatient',
+        return $.post(URLS.addPatient,
             {
                 hospitalNumber: hospitalNumber,
                 firstname: firstname,
@@ -132,12 +132,12 @@
     }
 
     function getPatients(meetingID) {
-        return $.getJSON(BASE_URL + '/GetPatients/' + meetingID);
+        return $.getJSON(URLS.getPatients + '/' + meetingID);
     }
 
 
     function getPatientDetails(patientID) {
-        return $.getJSON(BASE_URL +'/GetPatientDetails/' + patientID);
+        return $.getJSON(URLS.getPatientDetails + '/' + patientID);
     }
 
     function setHeader(xhr) {

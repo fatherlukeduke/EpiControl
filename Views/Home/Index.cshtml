@@ -22,6 +22,13 @@
             $.ajaxSetup({ cache: false });
             let baseUrl = '@Url.Content("~")';
 
+
+            let urls = {
+                getPatients: '@Url.Action("GetPatients")',
+                getPatientDetails: '@Url.Action("GetPatientDetails")',
+                addPatient : '@Url.Action("AddPatient")'
+            };
+
             //check browser isn't IE11
             if (!!window.MSInputMethodContext && !!document.documentMode)
             {
@@ -29,7 +36,7 @@
                 $('.control-container').hide();
             } else {
                 //fire this Mother up
-                APP.init(baseUrl)
+                APP.init(urls)
                     .then(FCM.init())
             }
         })
