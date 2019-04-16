@@ -114,7 +114,9 @@
             url: 'https://api.epivote.uk/user/registerClient',
             type: 'POST',
             data: { ActivationCode: '0592' },
-            done: (token => { localStorage.setItem('token', token.token.rawData) } )
+            success: (tokenPayload => {
+                localStorage.setItem('token', tokenPayload.token.rawData)
+            })
         });
     }
 

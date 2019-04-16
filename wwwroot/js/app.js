@@ -69,7 +69,7 @@ var APP = (function (data_api, render) {
 
                 data_api.getPatients($('#meetingChoices').val())
                     .then(patients => {
-                        $('#patients').html('<h2>Loading.....</h2>')
+                        $('#patients').html('<h2>Loading.....</h2>');
                         let meetingID = render.patients(patients, meetingDate);
                         data_api.getActiveQuestion(meetingID)
                             .then(data => {
