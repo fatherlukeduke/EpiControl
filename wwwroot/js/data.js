@@ -1,4 +1,4 @@
-﻿var DATA_API = (function () {
+﻿var DATA_API = (function (_config) {
 
     function getResults(meetingPatientQuestionID) {
          return $.ajax({
@@ -123,7 +123,7 @@
     //***************LOCAL SYSTEM DATA CALLS***********************************
     //**************************************************************************
     function addNewPatient(hospitalNumber, firstname, surname, dob, meetingID) {
-        return $.post(URLS.addPatient,
+        return $.post(_config.urls.addPatient,
             {
                 hospitalNumber: hospitalNumber,
                 firstname: firstname,
@@ -134,12 +134,12 @@
     }
 
     function getPatients(meetingID) {
-        return $.getJSON(URLS.getPatients + '/' + meetingID);
+        return $.getJSON(_config.urls.getPatients + '/' + meetingID);
     }
 
 
     function getPatientDetails(patientID) {
-        return $.getJSON(URLS.getPatientDetails + '/' + patientID);
+        return $.getJSON(_config.urls.getPatientDetails + '/' + patientID);
     }
 
     function setHeader(xhr) {
@@ -166,6 +166,6 @@
         AuthenticateWithAPI: AuthenticateWithAPI
     };
 
-})();
+})(CONFIG);
 
 

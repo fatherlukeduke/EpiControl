@@ -1,4 +1,4 @@
-﻿var RENDER = (function (data_api) {
+﻿var RENDER = (function (_data_api, _config) {
 
     var BIG_CHART, CHART;
 
@@ -34,7 +34,7 @@
         $('#addNewPatient').prop('disabled', true);
         var html = '<h3>Question open for voting</h3>';
         html += '<div class="row><div class="col"><h2><span class="badge badge-pill  vote-count">Votes cast: ' + voteCount + '</span></h2></div></div>';
-        html += '<img class="mx-auto" style="height:150px;" src = "images/loader.gif" />';
+        html += '<img class="mx-auto" style="height:150px;" src ="' + _config.urls.base +  '/images/loader.gif" />';
         html += '<button class="btn mr-3 btn-block btn-primary complete-vote mb-2 mt-2" data-meeting-patient-question-id="'
             + meetingPatientQuestionID + '" > Close voting</button >';
 
@@ -106,7 +106,7 @@
                 renderQuestionOpen(question.meetingPatientQuestionID);
             }
         } else {
-            data_api.getResults(question.meetingPatientQuestionID)
+            _data_api.getResults(question.meetingPatientQuestionID)
                 .then(data => {
                     html = '<h2>Average score: ' + data.averageScore.toFixed(1) + '</h2>';
                     $('#score').html(html);
@@ -159,4 +159,4 @@
         questionResult: renderQuestionResult,
         chart: renderChart
     };
-})(DATA_API);
+})(DATA_API, CONFIG);

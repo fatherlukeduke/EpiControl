@@ -3,9 +3,9 @@
 var ACTIVE_QUESTION;   //global to track if there is an active question
 var CURRENT_MEETING;   //global to track current meeting
 var AJAX_LOADER_TIMEOUT;  //global to track timeout timers
-var URLS;  //resolved URLs
+//var URLS;  //resolved URLs
 
-var APP = (function (data_api, render) {
+var APP = (function (_data_api, _render, _config) {
 
     //display error message
     //---------------------------------------------------------------------------
@@ -17,13 +17,13 @@ var APP = (function (data_api, render) {
 
     //initialise this bad boy.  Authenticate, then fetch future meetings
     //---------------------------------------------------------------------------
-    function init(urls) {
+    function init() {
         return new Promise(resolve => {
-            URLS = urls;
+           // URLS = urls;
 
-            data_api.AuthenticateWithAPI()
+            _data_api.AuthenticateWithAPI()
                 .then(() => {
-                    return data_api.getMeetings();
+                    return _data_api.getMeetings();
                 })
                 .then(data => {
                     $('.meeting-loader').hide();
@@ -60,18 +60,18 @@ var APP = (function (data_api, render) {
                 $('.control-panel').hide();
                 CURRENT_MEETING = null;
             } else {
-                data_api.getMeeting($('#meetingChoices').val())
+                _data_api.getMeeting($('#meetingChoices').val())
                     .then(meeting => {
                         CURRENT_MEETING = meeting;
-                        render.meetingDetails(meeting);
+                        _render.meetingDetails(meeting);
                     })
                     .catch(err => console.log('Error: ' + JSON.stringify(err)));
 
-                data_api.getPatients($('#meetingChoices').val())
+                _data_api.getPatients($('#meetingChoices').val())
                     .then(patients => {
                         $('#patients').html('<h2>Loading.....</h2>');
-                        let meetingID = render.patients(patients, meetingDate);
-                        data_api.getActiveQuestion(meetingID)
+                        let meetingID = _render.patients(patients, meetingDate);
+                        _data_api.getActiveQuestion(meetingID)
                             .then(data => {
                                 ACTIVE_QUESTION = data;
                                 $("body").find("button[data-meeting-patient-id='" + data.meetingPatientID + "']").trigger('click');
@@ -107,14 +107,14 @@ var APP = (function (data_api, render) {
             });
 
             if (validated) {
-                data_api.addNewPatient(
+                _data_api.addNewPatient(
                     $('#newHospitalNumber').val(),
                     $('#newFirstname').val(),
                     $('#newSurname').val(),
                     $('#newDOB').val(),
                     $('#meetingChoices').val()
-                ).then(patient => data_api.getPatients($('#meetingChoices').val()))
-                    .then(patients => render.patients(patients));
+                ).then(patient => _data_api.getPatients($('#meetingChoices').val()))
+                    .then(patients => _render.patients(patients));
                 $('#addNewPatientDialog').modal('hide');
             } else {
                 $('#addPatientError').html('You need to fill all the fields in.').show();
@@ -132,15 +132,15 @@ var APP = (function (data_api, render) {
             var patientID = $(e.currentTarget).data('patient-id');
             var meetingPatientID = $(e.currentTarget).data('meeting-patient-id');
 
-            data_api.getPatientDetails(patientID)
-                .then(patient => { return render.patientDetails(patient); })
+            _data_api.getPatientDetails(patientID)
+                .then(patient => { return _render.patientDetails(patient); })
                 .then(patient => {
                     AJAX_LOADER_TIMEOUT = setTimeout(function () {
                         $('#questions').html('<h2>Loading...</h2>');
                     }, 1000);
-                    return data_api.getQuestionsForPatient(patient.meetingPatientID);
+                    return _data_api.getQuestionsForPatient(patient.meetingPatientID);
                 })
-                .then(questions => render.questions(questions, meetingPatientID))
+                .then(questions => _render.questions(questions, meetingPatientID))
                 .catch(err => console.log('Error: ' + JSON.stringify(err)));
         });
 
@@ -148,10 +148,10 @@ var APP = (function (data_api, render) {
         //------------------------------------------------------------------
         $('body').on('click', '.open-vote', e => {
             var meetingPatientQuestionID = $(e.currentTarget).data('meeting-patient-question-id');
-            data_api.openVoteForQuestion(meetingPatientQuestionID)
+            _data_api.openVoteForQuestion(meetingPatientQuestionID)
                 .then(question => {
                     ACTIVE_QUESTION = question;
-                    render.questionOpen(meetingPatientQuestionID);
+                    _render.questionOpen(meetingPatientQuestionID);
                 })
                 .catch(err => console.log('Error: ' + JSON.stringify(err)));
         });
@@ -168,10 +168,10 @@ var APP = (function (data_api, render) {
             $('.question-row').removeClass('selected-patient');
             $('.selected-arrow').remove();
             $(e.currentTarget).addClass('selected-patient');
-            $(e.currentTarget).append('<img style="width:30px;float:right" src="' + './open-iconic/svg/arrow-thick-right.svg" class="selected-arrow">');
-            data_api.getQuestion(id)
+            $(e.currentTarget).append('<img style="width:30px;float:right" src="' + _config.urls.base + '/images/arrow-thick-right.svg" class="selected-arrow">');
+            _data_api.getQuestion(id)
                 .then(data => {
-                    render.questionResult(data);
+                    _render.questionResult(data);
                 });
         });
 
@@ -179,11 +179,11 @@ var APP = (function (data_api, render) {
         //------------------------------------------------------------------
         $('body').on('click', '.complete-vote', e => {
             let id = $(e.currentTarget).data('meeting-patient-question-id');
-            data_api.completeVoteForQuestion(id)
-                .then(() => data_api.getResults(id))
+            _data_api.completeVoteForQuestion(id)
+                .then(() => _data_api.getResults(id))
                 .then((results) => {
                     $('#results').show();
-                    render.chart(results.chartData);
+                    _render.chart(results.chartData);
                     $('#score').html('<h2>Average score: ' + results.averageScore.toFixed(1) + '</h2>');
                     $('.question-row, .pick-patient').removeClass('element-disabled');
                     $('.change-status').removeClass('meeting-status-disabled');
@@ -200,9 +200,9 @@ var APP = (function (data_api, render) {
         $('body').on('click', '#submitNewQuestion', e => {
             const meetingPatientID = $('.selected-patient').data('meeting-patient-id');
             const questionText = $('#newQuestionText').val();
-            data_api.addNewQuestion(meetingPatientID, questionText)
-                .then(newQuestion => data_api.getQuestionsForPatient(meetingPatientID))
-                .then((questions) => render.questions(questions))
+            _data_api.addNewQuestion(meetingPatientID, questionText)
+                .then(newQuestion => _data_api.getQuestionsForPatient(meetingPatientID))
+                .then((questions) => _render.questions(questions))
                 .catch(err => console.log('Error: ' + JSON.stringify(err)));
             $('#addNewQuestionDialog').modal('hide');
         });
@@ -231,10 +231,10 @@ var APP = (function (data_api, render) {
         $('body').on('click', '.open-meeting', e => {
             let meetingID = $('#meetingChoices').val();
             $('#changeMeetingStatusDialog').modal('hide');
-            data_api.openMeeting(meetingID)
+            _data_api.openMeeting(meetingID)
                 .then(meeting => {
                     if (!meeting) {
-                        return data_api.getMeeting(meetingID);
+                        return _data_api.getMeeting(meetingID);
                     } else {  //another meeting already open
                         let meetingDateText = moment(meeting.meetingDate).format("DD/MM/YY");
                         showError('There is already a meeting open for ' + meetingDateText + ' please close this first.');
@@ -243,7 +243,7 @@ var APP = (function (data_api, render) {
                 })
                 .then(meeting => {
                     CURRENT_MEETING = meeting;
-                    render.meetingDetails(meeting);
+                    _render.meetingDetails(meeting);
                 })
                 .catch(err => console.log('Error: ' + err));
         });
@@ -251,11 +251,11 @@ var APP = (function (data_api, render) {
         $('body').on('click', '.close-meeting', e => {
             let meetingID = $('#meetingChoices').val();
             $('#changeMeetingStatusDialog').modal('hide');
-            data_api.closeMeeting(meetingID)
-                .then(() => { return data_api.getMeeting(meetingID); })
+            _data_api.closeMeeting(meetingID)
+                .then(() => { return _data_api.getMeeting(meetingID); })
                 .then(meeting => {
                     CURRENT_MEETING = meeting.meetingDetails;
-                    render.meetingDetails(meeting);
+                    _render.meetingDetails(meeting);
                 })
                 .catch(err => console.log('Error: ' + JSON.stringify(err)));
         });
@@ -296,4 +296,4 @@ var APP = (function (data_api, render) {
     };
 
 
-})(DATA_API, RENDER);
+})(DATA_API, RENDER, CONFIG);
