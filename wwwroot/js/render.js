@@ -1,4 +1,4 @@
-﻿var RENDER = (function (_data_api, _config) {
+﻿var RENDER = (function (_data, _config) {
 
     var BIG_CHART, CHART;
 
@@ -106,7 +106,7 @@
                 renderQuestionOpen(question.meetingPatientQuestionID);
             }
         } else {
-            _data_api.getResults(question.meetingPatientQuestionID)
+            _data.getResults(question.meetingPatientQuestionID)
                 .then(data => {
                     html = '<h2>Average score: ' + data.averageScore.toFixed(1) + '</h2>';
                     $('#score').html(html);
@@ -120,6 +120,8 @@
 
     function renderMeetingDetails(meeting) {
         $('.control-panel').show();
+
+        $('.active-members').html(meeting.activeMembers);
 
         let meetingDate = moment(meeting.meetingDate).format('DD/MM/YY hh:mm');
         $('#meetingDate').html('<h4>Meeting date: ' + meetingDate + '</h4>');

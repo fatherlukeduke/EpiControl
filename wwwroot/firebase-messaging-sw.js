@@ -15,10 +15,22 @@ messaging.setBackgroundMessageHandler(payload => {
     console.log('[firebase-messaging-sw.js] Received background message ', payload);
     // Customize notification here
     const notificationTitle = payload.data.title;
-    const notificationOptions = {
-        body: 'Votes cast: ' + payload.data.votes,
-        icon: '/images/icon.png'
-    };
+    var notificationOptions;
+
+    if (payload.data.messageType === 'vote') {
+        notificationOptions = {
+            body: 'Votes cast: ' + payload.data.numberOfVotes,
+            icon: '/images/icon.png'
+        };
+    }
+
+    if (payload.data.messageType === 'joined' || payload.data.messageType === 'left' ) {
+        notificationOptions = {
+            body: payload.data.body,
+            icon: '/images/icon.png'
+        };
+    }
+
 
     return self.registration.showNotification(notificationTitle,
         notificationOptions);

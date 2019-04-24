@@ -1,6 +1,6 @@
 ﻿//**********************Register with firebase push messaging*******************************
 
-var FCM = (function (_data_api, _config) {
+var FCM = (function (_data, _config) {
     var config = {
         apiKey: "AIzaSyCAicf3USbiI1Y4wkhMibWa87IKjLJ8_eE",
         authDomain: "epivotecontrol.firebaseapp.com",
@@ -16,7 +16,8 @@ var FCM = (function (_data_api, _config) {
         const messaging = firebase.messaging();
         navigator.serviceWorker.register(_config.urls.base + '/firebase-messaging-sw.js')
             .then((registration) => {
-                messaging.useServiceWorker(registration)
+                messaging.useServiceWorker(registration);
+
                 messaging.requestPermission()
                     .then(() => {
                         console.log("Notification permission granted.");
@@ -25,20 +26,27 @@ var FCM = (function (_data_api, _config) {
                     })
                     .then(token => {
                         console.log("FCM token is : " + token);
-                        _data_api.sendTokenToServer(token);
-                    })
+                        _data.sendTokenToServer(token);
+                    });
             }).catch(err => {
                 console.log(err);
             });
 
         messaging.onMessage(payload => {
-            $('.vote-count').html('Votes cast: ' + payload.data.votes);
+            if (payload.messageType === 'vote') {
+                $('.vote-count').html('Votes cast: ' + payload.data.numberOfVotes);
+            }
+
+            if (payload.data.messageType === 'joined' || payload.data.messageType === 'left') {
+                $('.active-members').html(payload.data.activeMembers);
+            }
+
             console.log("Message received. ", payload);
         });
     }
 
     return {
-        init : init
-    }
+        init: init
+    };
 
 })(DATA_API, CONFIG);
