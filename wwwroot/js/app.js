@@ -3,7 +3,7 @@
 var ACTIVE_QUESTION;   //global to track if there is an active question
 var CURRENT_MEETING;   //global to track current meeting
 var AJAX_LOADER_TIMEOUT;  //global to track timeout timers
-//var URLS;  //resolved URLs
+
 
 var APP = (function (_data, _render, _config) {
 
@@ -19,7 +19,6 @@ var APP = (function (_data, _render, _config) {
     //---------------------------------------------------------------------------
     function init() {
         return new Promise(resolve => {
-           // URLS = urls;
 
             _data.AuthenticateWithAPI()
                 .then(() => {
@@ -68,9 +67,9 @@ var APP = (function (_data, _render, _config) {
                     })
                     .catch(err => console.log('Error: ' + JSON.stringify(err)));
 
+                $('#patients').html('<h2>Loading.....</h2>');
                 _data.getPatients($('#meetingChoices').val())
-                    .then(patients => {
-                        $('#patients').html('<h2>Loading.....</h2>');
+                    .then(patients => {                   
                         let meetingID = _render.patients(patients, meetingDate);
                         _data.getActiveQuestion(meetingID)
                             .then(data => {
