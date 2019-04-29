@@ -1,5 +1,5 @@
-﻿importScripts('https://www.gstatic.com/firebasejs/3.9.0/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/3.9.0/firebase-messaging.js');
+﻿importScripts('./lib/firebase/firebase-app.js');
+importScripts('./lib/firebase/firebase-messaging.js');
 
 // Initialize the Firebase app in the service worker by passing in the
 // messagingSenderId.
@@ -20,14 +20,14 @@ messaging.setBackgroundMessageHandler(payload => {
     if (payload.data.messageType === 'vote') {
         notificationOptions = {
             body: 'Votes cast: ' + payload.data.numberOfVotes,
-            icon: '/images/icon.png'
+            icon: './images/icon.png'
         };
     }
 
     if (payload.data.messageType === 'joined' || payload.data.messageType === 'left' ) {
         notificationOptions = {
             body: payload.data.body,
-            icon: '/images/icon.png'
+            icon: './images/icon.png'
         };
     }
 
