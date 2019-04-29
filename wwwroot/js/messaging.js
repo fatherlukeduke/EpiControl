@@ -34,7 +34,11 @@ var FCM = (function (_data, _config) {
 
         messaging.onMessage(payload => {
             if (payload.data.messageType === 'vote') {
-                $('.number-of-votes').html(payload.data.numberOfVotes);
+                let el = document.querySelector('.number-of-votes');
+                let od = new Odometer({
+                    el: el
+                })
+                od.update(payload.data.numberOfVotes);
             }
 
             if (payload.data.messageType === 'joined' || payload.data.messageType === 'left') {
