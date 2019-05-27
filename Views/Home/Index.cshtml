@@ -1,4 +1,6 @@
-﻿@section Scripts{
+﻿@model EpiControl.Models.HomeView
+
+@section Scripts{
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
     <script src="~/lib/firebase/firebase-app.js"></script>
@@ -24,7 +26,8 @@
                 base : '@Url.Content("~")',
                 getPatients: '@Url.Action("GetPatients")',
                 getPatientDetails: '@Url.Action("GetPatientDetails")',
-                addPatient : '@Url.Action("AddPatient")'
+                addPatient: '@Url.Action("AddPatient")',
+                apiUrl : '@Model.ApiUrl'
             };
 
             CONFIG.urls = urls;

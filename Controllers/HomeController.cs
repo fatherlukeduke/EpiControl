@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using System.Collections.Specialized;
 using System.Text;
 using Newtonsoft.Json.Linq;
-
+using Microsoft.Extensions.Configuration;
 
 namespace EpiControl.Controllers
 {
@@ -20,16 +20,18 @@ namespace EpiControl.Controllers
     public class HomeController : Controller
     {
         private EpiVoteControlContext db;
+        private IConfiguration _configuration;
 
-        public HomeController(EpiVoteControlContext context)
+        public HomeController(EpiVoteControlContext context, IConfiguration configuration)
         {
             db = context;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
         {
-            //var test = db.Patient.ToList();
-            return View();
+            HomeView view = new HomeView() { ApiUrl = _configuration["ApiUrl"] };
+            return View("Index", view);
         }
 
         [Route("home/GetPatients/{meetingID}")]
@@ -89,7 +91,8 @@ namespace EpiControl.Controllers
             {
                 
                 HttpClient client = new HttpClient();
-                var response = await client.PostAsync("https://api.epivote.uk/vote/AddPatient/" + meetingID.ToString(), null);
+                string url = _configuration["apiUrl"];
+                var response = await client.PostAsync(url + "/vote/AddPatient/" + meetingID.ToString(), null);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
 

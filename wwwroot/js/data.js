@@ -1,8 +1,8 @@
 ﻿var DATA_API = (function (_config) {
 
     function getResults(meetingPatientQuestionID) {
-         return $.ajax({
-            url: 'https://api.epivote.uk/vote/GetResults/' + meetingPatientQuestionID,
+        return $.ajax({
+            url: _config.urls.apiUrl + '/vote/GetResults/' + meetingPatientQuestionID,
             type: 'GET',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -11,7 +11,7 @@
     function getActiveQuestion(meetingID) {
         
         return $.ajax({
-            url: 'https://api.epivote.uk/vote/GetCurrentQuestionForMeeting/' + meetingID,
+            url: _config.urls.apiUrl + '/vote/GetCurrentQuestionForMeeting/' + meetingID,
             type: 'GET',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -19,7 +19,7 @@
 
     function completeVoteForQuestion(meetingPatientQuestionID) {
         return $.ajax({
-            url: 'https://api.epivote.uk/vote/VoteComplete/' + meetingPatientQuestionID,
+            url: _config.urls.apiUrl + '/vote/VoteComplete/' + meetingPatientQuestionID,
             type: 'POST',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -27,7 +27,7 @@
 
     function openVoteForQuestion(meetingPatientQuestionID) {
         return $.ajax({
-            url: 'https://api.epivote.uk/vote/OpenVoteForQuestion/' + meetingPatientQuestionID,
+            url: _config.urls.apiUrl + '/vote/OpenVoteForQuestion/' + meetingPatientQuestionID,
             type: 'POST',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -35,7 +35,7 @@
 
     function getMeetings() {
         return $.ajax({
-            url: 'https://api.epivote.uk/vote/Getmeetings',
+            url: _config.urls.apiUrl + '/vote/Getmeetings',
             type: 'GET',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -43,7 +43,7 @@
 
     function getMeeting(meetingID) {   
         return $.ajax({
-            url: ' https://api.epivote.uk/vote/Getmeeting/' + meetingID,
+            url: _config.urls.apiUrl + '/vote/Getmeeting/' + meetingID,
             type: 'GET',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -52,7 +52,7 @@
 
     function getSelectedMeeting(meetingID) {
         return $.ajax({
-            url: 'https://api.epivote.uk/vote/GetMeeting/' + meetingID,
+            url: _config.urls.apiUrl + '/vote/GetMeeting/' + meetingID,
             type: 'GET',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -60,7 +60,7 @@
 
     function getQuestionsForPatient(meetingPatientID) {
         return $.ajax({
-            url: 'https://api.epivote.uk/vote/GetQuestionsForPatient/' + meetingPatientID,
+            url: _config.urls.apiUrl + '/vote/GetQuestionsForPatient/' + meetingPatientID,
             type: 'GET',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -68,7 +68,7 @@
 
     function getQuestion(meetingPatientQuestionID) { 
         return $.ajax({
-            url: 'https://api.epivote.uk/vote/GetQuestion/' + meetingPatientQuestionID,
+            url: _config.urls.apiUrl + '/vote/GetQuestion/' + meetingPatientQuestionID,
             type: 'GET',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -76,7 +76,7 @@
 
     function addNewQuestion(meetingPatientID, questionText) {
         return $.ajax({
-            url: 'https://api.epivote.uk/vote/AddQuestion',
+            url: _config.urls.apiUrl + '/vote/AddQuestion',
             type: 'POST',
             data: { meetingPatientID: meetingPatientID, questionText: questionText },
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
@@ -85,7 +85,7 @@
 
     function openMeeting(meetingID) {
       return   $.ajax({
-            url: 'https://api.epivote.uk/vote/OpenMeeting/' + meetingID,
+          url: _config.urls.apiUrl + '/vote/OpenMeeting/' + meetingID,
             type: 'POST',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -93,7 +93,7 @@
 
     function closeMeeting(meetingID) {
         return $.ajax({
-            url: 'https://api.epivote.uk/vote/CloseMeeting/' + meetingID,
+            url: _config.urls.apiUrl + '/vote/CloseMeeting/' + meetingID,
             type: 'POST',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -102,7 +102,7 @@
     //send token to Firebase messanging to enable receiving messages
     function sendMessagingTokenToServer(token) {
         return $.ajax({
-            url: 'https://api.epivote.uk/vote/SetControlPanelToken/' + token,
+            url: _config.urls.apiUrl + '/vote/SetControlPanelToken/' + token,
             type: 'POST',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -111,7 +111,7 @@
     //authenticate with the web api
     function AuthenticateWithAPI() {
         return $.ajax({
-            url: 'https://api.epivote.uk/user/registerClient',
+            url: _config.urls.apiUrl + '/user/registerClient',
             type: 'POST',
             data: { ActivationCode: '0592' },
             success: (tokenPayload => {
