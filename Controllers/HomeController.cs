@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http.Headers;
 
 namespace EpiControl.Controllers
 {
@@ -84,15 +85,19 @@ namespace EpiControl.Controllers
 
         [HttpPost]
         [Route("home/AddPatient")]
-        public async Task<ActionResult<Patient>> AddPatient(int hospitalNumber, string surname, string firstname, DateTime DOB, int meetingID)
+        public async Task<ActionResult<Patient>> 
+            AddPatient(int hospitalNumber, string surname, string firstname, DateTime DOB, int meetingID, string accessToken)
         {
            
             try
             {
                 
                 HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 string url = _configuration["apiUrl"];
                 var response = await client.PostAsync(url + "/vote/AddPatient/" + meetingID.ToString(), null);
+                
+
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
 

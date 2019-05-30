@@ -129,7 +129,8 @@
                 firstname: firstname,
                 surname: surname,
                 DOB: dob,
-                meetingID: meetingID
+                meetingID: meetingID,
+                accessToken: localStorage.getItem('token')
             });
     }
 
