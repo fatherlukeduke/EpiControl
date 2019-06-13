@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http.Headers;
 
 namespace EpiControl.Controllers
 {
@@ -91,9 +92,11 @@ namespace EpiControl.Controllers
             {
                 
                 HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 string url = _configuration["apiUrl"];
-                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
                 var response = await client.PostAsync(url + "/vote/AddPatient/" + meetingID.ToString(), null);
+                
+
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
 
