@@ -31,7 +31,7 @@ var APP = (function (_data, _render, _config) {
                     data.forEach(d => {
                         html += '<option data-meeting-status="' + d.meetingOpen + '" data-meeting-code="' + d.meetingCode +
                             '" class="dropdown-item meeting-select" value="' + d.meetingID + '">' +
-                            moment(d.meetingDate).format("DD/MM/YY  hh:mm") + '</option>';
+                            moment(d.meetingDate).format("DD/MM/YY  HH:mm") + '</option>';
                     });
                     $('#meetingChoices').append(html);
                 })
@@ -212,6 +212,20 @@ var APP = (function (_data, _render, _config) {
             $('#newQuestionText').focus();
             $('#newQuestionText').val('');
         });
+
+        //add new meeting
+         //------------------------------------------------------------------
+        $('body').on('click', '#addNewMeeting', e => {
+            $('#addNewMeetingDialog').modal();
+            $('#newMeetingDateTime').datetimepicker({
+                format: 'd/m/Y H:i', timepicker: true,
+                mask: true
+            });
+        });
+        $('body').on('click', '#addNewMeeting', e => {
+
+        })
+
 
         //change meeting status
         //------------------------------------------------------------------

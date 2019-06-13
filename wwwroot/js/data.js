@@ -115,7 +115,7 @@
             type: 'POST',
             data: { ActivationCode: '0592' },
             success: (tokenPayload => {
-                localStorage.setItem('token', tokenPayload.token.rawData)
+                localStorage.setItem('token', tokenPayload.token.rawData);
             })
         });
     }
@@ -126,6 +126,7 @@
         return $.post(_config.urls.addPatient,
             {
                 hospitalNumber: hospitalNumber,
+                token: localStorage.getItem('token'),
                 firstname: firstname,
                 surname: surname,
                 DOB: dob,

@@ -84,7 +84,7 @@ namespace EpiControl.Controllers
 
         [HttpPost]
         [Route("home/AddPatient")]
-        public async Task<ActionResult<Patient>> AddPatient(int hospitalNumber, string surname, string firstname, DateTime DOB, int meetingID)
+        public async Task<ActionResult<Patient>> AddPatient(string token, int hospitalNumber, string surname, string firstname, DateTime DOB, int meetingID)
         {
            
             try
@@ -92,6 +92,7 @@ namespace EpiControl.Controllers
                 
                 HttpClient client = new HttpClient();
                 string url = _configuration["apiUrl"];
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
                 var response = await client.PostAsync(url + "/vote/AddPatient/" + meetingID.ToString(), null);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
