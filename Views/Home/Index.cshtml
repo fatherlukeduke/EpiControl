@@ -8,17 +8,28 @@
 
     <script src="~/lib/odometer.min.js"></script>
     <script src="~/js/chart-config.js"></script>
-    <script src="~/js/config.js"></script>  
+    <script src="~/js/config.js"></script>
     <script src="~/js/data.js"></script>
     <script src="~/js/render.js"></script>
     <script src="~/js/app.js"></script>
     <script src="~/js/messaging.js"></script>
-    
+    <script src="~/lib/signalr/signalr.js"></script>
+
 
     <script>
 
         //launch
         $(document).ready(function () {
+
+            //var connection = new signalR.HubConnectionBuilder().withUrl("https://api.epivote.uk/notify").build();
+            //connection.on("BroadcastMessage", function (user, message) {
+            //    console.log(user)
+            //})
+            //connection.start({  }).then(function () {
+
+            //}).catch(function (err) {
+            //    return console.error(err.toString());
+            //});
 
             $.ajaxSetup({ cache: false });
 
@@ -48,7 +59,7 @@
 }
 <div class="container ml-3">
     <div class="alert alert-danger" id="browser-warning" style="display:none" role="alert">
-        <p>THIS APPLICATION DOES NOT SUPPORT INTERNET EXPLORER 11.</p>  
+        <p>THIS APPLICATION DOES NOT SUPPORT INTERNET EXPLORER 11.</p>
         <p>PLEASE USE A MODERN BROWSER SUCH AS GOOGLE CHROME, MICROSOFT EDGE OR MOZILLA FIREFOX.</p>
     </div>
     <div class="alert alert-danger" id="system-error" style="display:none" role="alert"></div>
@@ -69,7 +80,7 @@
 
         <h2 class="ml-5 meeting-count">In meeting: <span class="badge odometer pl-4 pr-4 active-members badge-primary"></span></h2>
 
-        <button type="button" class="ml-5 btn btn-info">Add meeting</button>
+        <button type="button" id="addNewMeeting" class="ml-5 btn btn-info">Add meeting</button>
     </div>
 
     <div style="background-color:#e8e8d6;display:none" id="controlPanel" class="container control-panel border p-3 m-3 rounded">
@@ -272,6 +283,34 @@
             <div class="modal-body text-center">
                 <button class="btn btn-lg btn-success open-meeting">Open Meeting</button>
                 <button class="btn btn-lg btn-secondary close-meeting  ">Close Meeting</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Add new meeting-->
+<div id="addNewMeetingDialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add a new meeting</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              
+                <form>
+                    <div class="form-group">
+                        <label>Meeting date time</label>
+                        <input class="form-control" style="width:200px;" id="newMeetingDateTime" />
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submitNewMeeting" class="btn btn-primary">Create meeting</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
