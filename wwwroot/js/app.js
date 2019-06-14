@@ -22,18 +22,7 @@ var APP = (function (_data, _render, _config) {
 
             _data.AuthenticateWithAPI()
                 .then(() => {
-                    return _data.getMeetings();
-                })
-                .then(data => {
-                    $('.meeting-loader').hide();
-                    $('.meeting-choice').show();
-                    var html = '';
-                    data.forEach(d => {
-                        html += '<option data-meeting-status="' + d.meetingOpen + '" data-meeting-code="' + d.meetingCode +
-                            '" class="dropdown-item meeting-select" value="' + d.meetingID + '">' +
-                            moment(d.meetingDate).format("DD/MM/YY  HH:mm") + '</option>';
-                    });
-                    $('#meetingChoices').append(html);
+                    populateMeetings();
                 })
                 .catch(xhr => {
                     showError('There was a problem processing the server request');
@@ -44,6 +33,23 @@ var APP = (function (_data, _render, _config) {
 
         });
 
+    }
+
+//Populate the meeting drop down list
+//---------------------------------------------------------------------------
+    function populateMeetings() {
+         _data.getMeetings()
+            .then(data => {
+                $('.meeting-loader').hide();
+                $('.meeting-choice').show();
+                var html = '';
+                data.forEach(d => {
+                    html += '<option data-meeting-status="' + d.meetingOpen + '" data-meeting-code="' + d.meetingCode +
+                        '" class="dropdown-item meeting-select" value="' + d.meetingID + '">' +
+                        moment(d.meetingDate).format("DD/MM/YY  HH:mm") + '</option>';
+                });
+                $('#meetingChoices').append(html);
+            })
     }
 
     //click events and flow
@@ -213,6 +219,7 @@ var APP = (function (_data, _render, _config) {
             $('#newQuestionText').val('');
         });
 
+
         //add new meeting
          //------------------------------------------------------------------
         $('body').on('click', '#addNewMeeting', e => {
@@ -222,8 +229,17 @@ var APP = (function (_data, _render, _config) {
                 mask: true
             });
         });
-        $('body').on('click', '#addNewMeeting', e => {
+        $('body').on('click', '#submitNewMeeting', e => {
+            let meetingDateTime = $('#newMeetingDateTime').val();
 
+            if (meetingDateTime.length === 0) {
+                return false;
+            }
+
+            _data.addMeeting(meetingDateTime)
+                .then(() => {
+                    populateMeetings();
+                })
         })
 
 

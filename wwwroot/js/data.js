@@ -99,6 +99,15 @@
         });
     }
 
+    function addMeeting(meetingDateTime) {
+        return $.ajax({
+            url: _config.urls.apiUrl + '/vote/AddMeeting',
+            type: 'POST',
+            data: { meetingDate: meetingDateTime },
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+    }
+
     //send token to Firebase messanging to enable receiving messages
     function sendMessagingTokenToServer(token) {
         return $.ajax({
@@ -163,8 +172,10 @@
         openMeeting: openMeeting,
         closeMeeting: closeMeeting,
         getMeeting: getMeeting,
+        addMeeting: addMeeting,
         sendTokenToServer: sendMessagingTokenToServer,
         AuthenticateWithAPI: AuthenticateWithAPI
+      
     };
 
 })(CONFIG);

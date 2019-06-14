@@ -128,7 +128,7 @@
 
         $('.active-members').html(meeting.activeMembers);
 
-        let meetingDate = moment(meeting.meetingDate).format('DD/MM/YY hh:mm');
+        let meetingDate = moment(meeting.meetingDate).format('DD/MM/YY HH:mm');
         $('#meetingDate').html('<h4>Meeting date: ' + meetingDate + '</h4>');
 
         let meetingCode = meeting.meetingCode;
