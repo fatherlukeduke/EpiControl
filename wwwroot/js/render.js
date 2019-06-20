@@ -57,7 +57,7 @@
             });
             html += '</div>';
             $('#patients').html(html);
-            $('#test').html('<span data-meeting-id="' + patients[0].meetingID + '" class="open-all mt-5 test" > TEST: reset meeting</span > ');
+           // $('#test').html('<span data-meeting-id="' + patients[0].meetingID + '" class="open-all mt-5 test" > TEST: reset meeting</span > ');
 
             return patients[0].meetingID;
         } else {
@@ -113,8 +113,10 @@
         } else {
             _data.getResults(question.meetingPatientQuestionID)
                 .then(data => {
-                    html = '<h2>Average score: ' + data.averageScore.toFixed(1) + '</h2>';
-                    $('#score').html(html);
+                    let sumOfVotes = data.chartData.reduce((a, b) => a + b, 0);
+                    html = '<div class="row"><div class="col"><h2>Average score: ' + data.averageScore.toFixed(1) + '</h2></div>';
+                    html += '<div class="col"><h2>Number of votes: ' + sumOfVotes + '</div></div>';
+                    $('#score').html('<div class="col"><h2>Number of votes: ' + sumOfVotes + '</div></div>');
                     $('#bigScore').html(html);
                     $('#results').show();
                     renderChart(data.chartData);
@@ -152,7 +154,7 @@
 
         CHART_CONFIG.data.datasets[0].data = chartData;
 
-        CHART = new Chart($('#chart'), CHART_CONFIG);
+        //CHART = new Chart($('#chart'), CHART_CONFIG);
         BIG_CHART = new Chart($('#bigChart'), CHART_CONFIG);
     }
 

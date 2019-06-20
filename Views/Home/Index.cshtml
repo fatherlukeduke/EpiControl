@@ -9,10 +9,10 @@
     <script src="~/lib/odometer.min.js"></script>
     <script src="~/js/chart-config.js"></script>
     <script src="~/js/config.js"></script>
-    <script src="~/js/data.js"></script>
-    <script src="~/js/render.js"></script>
-    <script src="~/js/app.js"></script>
-    <script src="~/js/messaging.js"></script>
+    <script src="~/js/data.js?v=1.1"></script>
+    <script src="~/js/render.js?v=1.1"></script>
+    <script src="~/js/app.js?v=1.1"></script>
+    <script src="~/js/messaging.js?v=1"></script>
     <script src="~/lib/signalr/signalr.js"></script>
 
 
@@ -38,7 +38,8 @@
                 getPatients: '@Url.Action("GetPatients")',
                 getPatientDetails: '@Url.Action("GetPatientDetails")',
                 addPatient: '@Url.Action("AddPatient")',
-                apiUrl : '@Model.ApiUrl'
+                apiUrl: '@Model.ApiUrl',
+                addToLocalDB: '@Url.Action("AddLocalPatient")'
             };
 
             CONFIG.urls = urls;
@@ -57,13 +58,14 @@
 
     </script>
 }
-<div class="container ml-3">
-    <div class="alert alert-danger" id="browser-warning" style="display:none" role="alert">
-        <p>THIS APPLICATION DOES NOT SUPPORT INTERNET EXPLORER 11.</p>
-        <p>PLEASE USE A MODERN BROWSER SUCH AS GOOGLE CHROME, MICROSOFT EDGE OR MOZILLA FIREFOX.</p>
+    <div class="container ml-3">
+        <div class="alert alert-danger" id="browser-warning" style="display:none" role="alert">
+            <p>THIS APPLICATION DOES NOT SUPPORT INTERNET EXwPLORER 11.</p>
+            <p>PLEASE USE A MODERN BROWSER SUCH AS GOOGLE CHROME, MICROSOFT EDGE OR MOZILLA FIREFOX.</p>
+        </div>
+        @*<div class="alert alert-danger" id="system-error" style="display:none" role="alert"></div>*@
+        <div class="" id="system-message" style="display:none" role="alert"></div>
     </div>
-    <div class="alert alert-danger" id="system-error" style="display:none" role="alert"></div>
-</div>
 
 <div class="container control-container  mt-3 ">
     <div class="input-group ml-3">
@@ -72,7 +74,7 @@
         </div>
 
         <select style="display:none" class="meeting-choice   rounded" title="Pick a meeting" id="meetingChoices">
-            <option value="">Select a meeting</option>
+           
         </select>
         <div class="ml-2 meeting-loader">
             <span>Loading....</span>   <img style="width:40px" src="~/images/loader.gif" />
@@ -89,7 +91,7 @@
             <div id="" class="col-4">
                 <h2 class="meeting-count">In meeting: <span class="badge odometer pl-4 pr-4 active-members badge-primary"></span></h2>
             </div>
-            <div id="meetingCode" class="col-3">
+            <div id="meetingCode" class="col-4">
 
             </div>
             <div id="meetingStatus" class="col-4">
@@ -135,10 +137,10 @@
             <div style="background-color:white" class="col-6 text-center question-result">
                 <div class="mt-2" id="score"></div>
                 <div id="results">
-                    <canvas id="chart"></canvas>
-                    <button class="btn btn-outline-primary mb-2 enlarge-chart">Enlarge</button>
+                    @*<canvas id="chart"></canvas>*@
+                    <button class="btn btn-outline-primary mb-2 mt-4 enlarge-chart">Show results</button>
                 </div>
-
+              
             </div>
         </div>
     </div>
@@ -184,7 +186,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title" id="bigScore"></div>
+                <div class="modal-title" style="width:100%" id="bigScore"></div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

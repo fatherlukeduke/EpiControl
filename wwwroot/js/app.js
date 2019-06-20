@@ -9,11 +9,11 @@ var APP = (function (_data, _render, _config) {
 
     //display error message
     //---------------------------------------------------------------------------
-    function showError(message) {
-        $('#system-error').html('<h3>' + message + '</h3>');
-        $('#system-error').show('slow');
-        setTimeout(function () { $('#system-error').hide('slow'); }, 7000);
-    }
+    //function showError(message) {
+    //    $('#system-error').html('<h3>' + message + '</h3>');
+    //    $('#system-error').show('slow');
+    //    setTimeout(function () { $('#system-error').hide('slow'); }, 7000);
+    //}
 
     //initialise this bad boy.  Authenticate, then fetch future meetings
     //---------------------------------------------------------------------------
@@ -25,12 +25,11 @@ var APP = (function (_data, _render, _config) {
                     populateMeetings();
                 })
                 .catch(xhr => {
-                    showError('There was a problem processing the server request');
+                    showMessage('There was a problem processing the server request', 'alert-danger');
                     console.log(xhr);
                 });
 
             registerEvents();
-
         });
 
     }
@@ -42,13 +41,13 @@ var APP = (function (_data, _render, _config) {
             .then(data => {
                 $('.meeting-loader').hide();
                 $('.meeting-choice').show();
-                var html = '';
+                var html = '<option value="">Select a meeting</option>';
                 data.forEach(d => {
                     html += '<option data-meeting-status="' + d.meetingOpen + '" data-meeting-code="' + d.meetingCode +
                         '" class="dropdown-item meeting-select" value="' + d.meetingID + '">' +
                         moment(d.meetingDate).format("DD/MM/YY  HH:mm") + '</option>';
                 });
-                $('#meetingChoices').append(html);
+                $('#meetingChoices').html(html);
             })
     }
 
@@ -83,11 +82,17 @@ var APP = (function (_data, _render, _config) {
                                 $("body").find("button[data-meeting-patient-id='" + data.meetingPatientID + "']").trigger('click');
                             })
                             .catch(err => {
+                                if (err.status !== 404) {
+                                    showMessage('There was a problem fetching the patients from the server', 'alert-danger');
+                                }
+                               
+                                console.log('Request error: ' + err.responseText);
                                 ACTIVE_QUESTION = null;
                             });
                     });
             }
         });
+
 
         //add new patient
         //------------------------------------------------------------------
@@ -105,6 +110,7 @@ var APP = (function (_data, _render, _config) {
         $('body').on('click', '#submitNewPatient', e => {
             let validated = true;
 
+
             //validate
             $('#newPatientForm input').each((index, element) => {
                 if ($(element).val().length === 0) {
@@ -113,19 +119,42 @@ var APP = (function (_data, _render, _config) {
             });
 
             if (validated) {
-                _data.addNewPatient(
-                    $('#newHospitalNumber').val(),
-                    $('#newFirstname').val(),
-                    $('#newSurname').val(),
-                    $('#newDOB').val(),
-                    $('#meetingChoices').val()
-                ).then(patient => _data.getPatients($('#meetingChoices').val()))
-                    .then(patients => _render.patients(patients));
+                let meetingID = $('#meetingChoices').val();
+                _data.addNewPatient(meetingID)
+                    .then(patient => {
+                        return _data.addPatientToLocalDB(
+                            $('#newHospitalNumber').val(),
+                            $('#newFirstname').val(),
+                            $('#newSurname').val(),
+                            $('#newDOB').val(),
+                            $('#meetingChoices').val(),
+                            patient.meetingPatientID,
+                            patient.patientNumber);
+                    })
+                    .then(() => _data.getPatients($('#meetingChoices').val()))
+                    .then(patients => _render.patients(patients))
+                    .catch(err => showMessage('There was an issue adding a new patient: ' + err));
                 $('#addNewPatientDialog').modal('hide');
             } else {
                 $('#addPatientError').html('You need to fill all the fields in.').show();
             }
+
+            //if (validated) {
+            //    let meetingID = $('#meetingChoices').val();
+            //    _data.addNewPatient(
+            //        $('#newHospitalNumber').val(),
+            //        $('#newFirstname').val(),
+            //        $('#newSurname').val(),
+            //        $('#newDOB').val(),
+            //        $('#meetingChoices').val()
+            //    ).then(patient => _data.getPatients($('#meetingChoices').val()))
+            //        .then(patients => _render.patients(patients));
+            //    $('#addNewPatientDialog').modal('hide');
+            //} else {
+            //    $('#addPatientError').html('You need to fill all the fields in.').show();
+            //}
         });
+
 
         //select a patient
         //------------------------------------------------------------------
@@ -224,6 +253,7 @@ var APP = (function (_data, _render, _config) {
          //------------------------------------------------------------------
         $('body').on('click', '#addNewMeeting', e => {
             $('#addNewMeetingDialog').modal();
+            $('#newMeetingDateTime').val('');
             $('#newMeetingDateTime').datetimepicker({
                 format: 'd/m/Y H:i', timepicker: true,
                 mask: true
@@ -236,8 +266,10 @@ var APP = (function (_data, _render, _config) {
                 return false;
             }
 
-            _data.addMeeting(meetingDateTime)
+            _data.addMeeting(UKtoISODate(meetingDateTime))
                 .then(() => {
+                    $('#addNewMeetingDialog').modal('hide');
+                    showMessage('Meeting added successfully', 'alert-success');
                     populateMeetings();
                 })
         })
@@ -267,7 +299,7 @@ var APP = (function (_data, _render, _config) {
                         return _data.getMeeting(meetingID);
                     } else {  //another meeting already open
                         let meetingDateText = moment(meeting.meetingDate).format("DD/MM/YY");
-                        showError('There is already a meeting open for ' + meetingDateText + ' please close this first.');
+                        showMessage('There is already a meeting open for ' + meetingDateText + ' please close this first.', 'alert-danger');
                         throw new Error('Meeting already open');
                     }
                 })
@@ -319,6 +351,25 @@ var APP = (function (_data, _render, _config) {
 
         });
 
+    }
+
+    //helpers
+    //-------------------------------------------------------------------------------------
+
+    //convert UK Datetime to ISO, innit
+    function UKtoISODate(ukdateTime) {
+        var dateTimeSplit = ukdateTime.split(' ');
+        var dateParts = dateTimeSplit[0].split("/");
+        return dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0] + 'T' + dateTimeSplit[1];
+    }
+
+     //helpers
+    function showMessage(message, colourClass) {
+        $('#system-message').removeClass();
+        $('#system-message').addClass('alert ' + colourClass)
+        $('#system-message').html('<h3>' + message + '</h3>');
+        $('#system-message').show('slow');
+        setTimeout(function () { $('#system-message').hide('slow'); }, 5000);
     }
 
     return {

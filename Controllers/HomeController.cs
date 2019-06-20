@@ -87,21 +87,64 @@ namespace EpiControl.Controllers
         [Route("home/AddPatient")]
         public async Task<ActionResult<Patient>> AddPatient(string token, int hospitalNumber, string surname, string firstname, DateTime DOB, int meetingID)
         {
-           
+
+            string url = _configuration["apiUrl"];
+
             try
             {
                 
                 HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                string url = _configuration["apiUrl"];
+
                 var response = await client.PostAsync(url + "/vote/AddPatient/" + meetingID.ToString(), null);
                 
-
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
 
                 MeetingPatient meetingPatient = JsonConvert.DeserializeObject<MeetingPatient>(responseBody);
 
+                try
+                {
+                    Patient localPatient = new Patient()
+                    {
+                        HospitalNumber = hospitalNumber,
+                        Surname = surname,
+                        Firstname = firstname,
+                        DOB = DOB,
+                        MeetingID = meetingID,
+                        MeetingPatientID = meetingPatient.MeetingPatientID,
+                        PatientNumber = meetingPatient.PatientNumber
+                    };
+
+                    localPatient.MeetingPatientID = meetingPatient.MeetingPatientID;
+
+                    db.Patient.Add(localPatient);
+                    db.SaveChanges();
+
+                    return localPatient;
+                }
+
+                catch (Exception ex)
+                {
+                    return StatusCode(500,"Database error: " +  ex.Message);
+                }
+             
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "API error: " + url + " " + ex.Message );
+            }
+        }
+
+        [HttpPost]
+        [Route("home/AddLocalPatient")]
+        public IActionResult AddLocalPatient(int meetingPatientID, int hospitalNumber, 
+                                                string surname, string firstname, DateTime DOB, 
+                                                int meetingID, int patientNumber)
+        {
+            try
+            {
                 Patient localPatient = new Patient()
                 {
                     HospitalNumber = hospitalNumber,
@@ -109,21 +152,18 @@ namespace EpiControl.Controllers
                     Firstname = firstname,
                     DOB = DOB,
                     MeetingID = meetingID,
-                    MeetingPatientID = meetingPatient.MeetingPatientID,
-                    PatientNumber = meetingPatient.PatientNumber
+                    MeetingPatientID = meetingPatientID,
+                    PatientNumber = patientNumber
                 };
-
-                localPatient.MeetingPatientID = meetingPatient.MeetingPatientID;              
 
                 db.Patient.Add(localPatient);
                 db.SaveChanges();
 
-                return localPatient;
-
+                return Ok();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, "There was an issue updating the local database: " + ex.Message);
             }
         }
 
