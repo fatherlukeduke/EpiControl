@@ -21,16 +21,6 @@
         //launch
         $(document).ready(function () {
 
-            //var connection = new signalR.HubConnectionBuilder().withUrl("https://api.epivote.uk/notify").build();
-            //connection.on("BroadcastMessage", function (user, message) {
-            //    console.log(user)
-            //})
-            //connection.start({  }).then(function () {
-
-            //}).catch(function (err) {
-            //    return console.error(err.toString());
-            //});
-
             $.ajaxSetup({ cache: false });
 
             let urls = {
@@ -52,7 +42,10 @@
             } else {
                 //fire this Mother up
                 APP.init(urls)
-                    .then(FCM.init())
+                    .then(() => {
+                        MESSAGE.initSignalR();
+                        MESSAGE.initFirebase();
+                    })
             }
         })
 
@@ -137,8 +130,9 @@
             <div style="background-color:white" class="col-6 text-center question-result">
                 <div class="mt-2" id="score"></div>
                 <div id="results">
-                    @*<canvas id="chart"></canvas>*@
-                    <button class="btn btn-outline-primary mb-2 mt-4 enlarge-chart">Show results</button>
+                    <canvas id="chart"></canvas><br />
+                    <button class="btn btn-outline-danger mb-2  text-center release-results">Release results</button>
+                    <button class="btn btn-outline-primary mb-2 enlarge-chart">Show large chart</button>
                 </div>
               
             </div>

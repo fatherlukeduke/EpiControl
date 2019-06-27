@@ -116,11 +116,16 @@
                     let sumOfVotes = data.chartData.reduce((a, b) => a + b, 0);
                     html = '<div class="row"><div class="col"><h2>Average score: ' + data.averageScore.toFixed(1) + '</h2></div>';
                     html += '<div class="col"><h2>Number of votes: ' + sumOfVotes + '</div></div>';
-                    $('#score').html('<div class="col"><h2>Number of votes: ' + sumOfVotes + '</div></div>');
+                    if (data.resultsReleased) {
+                        $('#score').html('<div class="col"><h2>Number of votes: ' + sumOfVotes + '</h2></div>');
+                    } else {
+                        $('#score').html('<div class="col"><h2>Number of votes: '
+                            + sumOfVotes + '</h2><h3>Voting closed</h3><h3>Results awaiting release</h3></div>');
+                    }
+                   
                     $('#bigScore').html(html);
                     $('#results').show();
-                    renderChart(data.chartData);
-                    //renderChart(data.chartData, 'bigChart');
+                    renderChart(data.chartData, data.resultsReleased);
                 });
         }
     }
@@ -143,7 +148,7 @@
 
     }
 
-    function renderChart(chartData) {
+    function renderChart(chartData, resultsReleased) {
 
         if (CHART) {
             CHART.destroy();
@@ -152,9 +157,12 @@
             BIG_CHART.destroy();
         }
 
+       
         CHART_CONFIG.data.datasets[0].data = chartData;
 
-        //CHART = new Chart($('#chart'), CHART_CONFIG);
+        if (resultsReleased) {
+            CHART = new Chart($('#chart'), CHART_CONFIG);
+        }
         BIG_CHART = new Chart($('#bigChart'), CHART_CONFIG);
     }
 

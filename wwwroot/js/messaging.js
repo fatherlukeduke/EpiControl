@@ -1,6 +1,6 @@
 ﻿//**********************Register with firebase push messaging*******************************
 
-var FCM = (function (_data, _config) {
+var MESSAGE = (function (_data, _config) {
     var config = {
         apiKey: "AIzaSyCAicf3USbiI1Y4wkhMibWa87IKjLJ8_eE",
         authDomain: "epivotecontrol.firebaseapp.com",
@@ -10,7 +10,7 @@ var FCM = (function (_data, _config) {
         messagingSenderId: "740789521324"
     };
 
-    function init() {
+    function initFirebase() {
         firebase.initializeApp(config);
 
         const messaging = firebase.messaging();
@@ -34,23 +34,54 @@ var FCM = (function (_data, _config) {
 
         messaging.onMessage(payload => {
             if (payload.data.messageType === 'vote') {
-                let el = document.querySelector('.number-of-votes');
-                let od = new Odometer({
-                    el: el
-                })
-                od.update(payload.data.numberOfVotes);
+                //let el = document.querySelector('.number-of-votes');
+                //let od = new Odometer({
+                //    el: el
+                //})
+                //od.update(payload.data.numberOfVotes);
             }
 
             if (payload.data.messageType === 'joined' || payload.data.messageType === 'left') {
-                $('.active-members').html(payload.data.activeMembers);
+                //$('.active-members').html(payload.data.activeMembers);
             }
 
             console.log("Message received. ", payload);
         });
     }
 
+    function initSignalR() {
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("https://api.epivote.uk/notify").build();
+        connection.on("BroadcastMessage", function (message) {
+            console.log(message);
+
+            if (message.getControlPanelMessageData) {
+                if (message.getControlPanelMessageData.messageType === 'joined' || message.getControlPanelMessageData.messageType === 'left') {
+                    $('.active-members').html(message.getControlPanelMessageData.activeMembers);
+                }
+
+                if (message.getControlPanelMessageData.messageType === 'vote') {
+
+                    let el = document.querySelector('.number-of-votes');
+                    let od = new Odometer({
+                        el: el
+                    });
+                    od.update(message.getControlPanelMessageData.numberOfVotes);
+                }
+            }
+
+        });
+
+        connection.start({}).then(function () {
+            console.log('SignalR started');
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+
     return {
-        init: init
+        initFirebase: initFirebase,
+        initSignalR: initSignalR
     };
 
 })(DATA_API, CONFIG);

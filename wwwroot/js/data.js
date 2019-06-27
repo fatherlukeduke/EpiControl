@@ -108,6 +108,14 @@
         });
     }
 
+    function releaseResults(meetingPatientQuestionID) {
+        return $.ajax({
+            url: _config.urls.apiUrl + '/vote/ReleaseResults/' + meetingPatientQuestionID,
+            type: 'POST',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+    }
+
     //send token to Firebase messanging to enable receiving messages
     function sendMessagingTokenToServer(token) {
         return $.ajax({
@@ -189,6 +197,7 @@
         addMeeting: addMeeting,
         sendTokenToServer: sendMessagingTokenToServer,
         AuthenticateWithAPI: AuthenticateWithAPI,
+        releaseResults: releaseResults,
         addPatientToLocalDB: addPatientToLocalDB
       
     };

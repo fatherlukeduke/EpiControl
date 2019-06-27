@@ -34,9 +34,9 @@ body {
     background-color: #a8a7dc !important;
     color: black !important;
 }
-
-.question-result{
-    display : none;
+.selected-question {
+    background-color: #a8a7dc !important;
+    color: black !important;
 }
 
 .test{

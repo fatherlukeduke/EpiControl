@@ -30,6 +30,8 @@ var APP = (function (_data, _render, _config) {
                 });
 
             registerEvents();
+
+            resolve();
         });
 
     }
@@ -37,7 +39,7 @@ var APP = (function (_data, _render, _config) {
 //Populate the meeting drop down list
 //---------------------------------------------------------------------------
     function populateMeetings() {
-         _data.getMeetings()
+        _data.getMeetings()
             .then(data => {
                 $('.meeting-loader').hide();
                 $('.meeting-choice').show();
@@ -48,7 +50,7 @@ var APP = (function (_data, _render, _config) {
                         moment(d.meetingDate).format("DD/MM/YY  HH:mm") + '</option>';
                 });
                 $('#meetingChoices').html(html);
-            })
+            });
     }
 
     //click events and flow
@@ -200,13 +202,20 @@ var APP = (function (_data, _render, _config) {
             $('#results').hide();
             $('.question-result').show();
             let id = $(e.currentTarget).data('meeting-patient-question-id');
-            $('.question-row').removeClass('selected-patient');
+            $('.question-row').removeClass('selected-question');
             $('.selected-arrow').remove();
-            $(e.currentTarget).addClass('selected-patient');
+            $(e.currentTarget).addClass('selected-question');
             $(e.currentTarget).append('<img style="width:30px;float:right" src="' + _config.urls.base + '/images/arrow-thick-right.svg" class="selected-arrow">');
             _data.getQuestion(id)
                 .then(data => {
                     _render.questionResult(data);
+                    if (data.resultsReleased) {
+                        $('.release-results').hide();
+                        $('.enlarge-chart').show();
+                    } else {
+                        $('.release-results').show();
+                        $('.enlarge-chart').hide();
+                    }
                 });
         });
 
@@ -271,7 +280,7 @@ var APP = (function (_data, _render, _config) {
                     $('#addNewMeetingDialog').modal('hide');
                     showMessage('Meeting added successfully', 'alert-success');
                     populateMeetings();
-                })
+                });
         })
 
 
@@ -334,6 +343,16 @@ var APP = (function (_data, _render, _config) {
         $('body').on('click', '#meetingCode', e => {
             $('#largeMeetingCode').html($(e.currentTarget).find('span').html())
             $('#showMeetingCodeDialog').modal();
+        });
+
+        //set results as released
+        //------------------------------------------------------------------
+        $('body').on('click', '.release-results', e => {
+            const meetingPatientQuestionID = $('.selected-question').data('meeting-patient-question-id');
+            _data.releaseResults(meetingPatientQuestionID)
+            then(() => {
+                $('.release-results').hide();
+            });
         });
 
 
