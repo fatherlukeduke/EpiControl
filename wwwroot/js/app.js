@@ -207,15 +207,8 @@ var APP = (function (_data, _render, _config) {
             $(e.currentTarget).addClass('selected-question');
             $(e.currentTarget).append('<img style="width:30px;float:right" src="' + _config.urls.base + '/images/arrow-thick-right.svg" class="selected-arrow">');
             _data.getQuestion(id)
-                .then(data => {
-                    _render.questionResult(data);
-                    if (data.resultsReleased) {
-                        $('.release-results').hide();
-                        $('.enlarge-chart').show();
-                    } else {
-                        $('.release-results').show();
-                        $('.enlarge-chart').hide();
-                    }
+                .then(question => {
+                    _render.questionResult(question);
                 });
         });
 
@@ -228,7 +221,8 @@ var APP = (function (_data, _render, _config) {
                 .then((results) => {
                     $('#results').show();
                     _render.chart(results.chartData);
-                    $('#score').html('<h2>Average score: ' + results.averageScore.toFixed(1) + '</h2>');
+                    _render.closedQuestion(results.meetingPatientQuestionID);
+                    //$('#score').html('<h2>Average score: ' + results.averageScore.toFixed(1) + '</h2>');
                     $('.question-row, .pick-patient').removeClass('element-disabled');
                     $('.change-status').removeClass('meeting-status-disabled');
                     $('.question-row, .pick-patient, .change-status').prop('disabled', false);
@@ -350,9 +344,8 @@ var APP = (function (_data, _render, _config) {
         $('body').on('click', '.release-results', e => {
             const meetingPatientQuestionID = $('.selected-question').data('meeting-patient-question-id');
             _data.releaseResults(meetingPatientQuestionID)
-            then(() => {
-                $('.release-results').hide();
-            });
+                .then(_render.closedQuestion(meetingPatientQuestionID))
+                .catch(showMessage('There was a problem processing the server request', 'alert-danger'));
         });
 
 

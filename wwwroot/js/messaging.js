@@ -45,7 +45,7 @@ var MESSAGE = (function (_data, _config) {
                 //$('.active-members').html(payload.data.activeMembers);
             }
 
-            console.log("Message received. ", payload);
+            console.log("FBC message received. ", payload);
         });
     }
 

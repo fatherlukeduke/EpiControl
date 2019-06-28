@@ -23,7 +23,7 @@
         });
     }
 
-    function renderQuestionOpen(meetingPatientQuestionID) {
+    function renderOpenQuestion(meetingPatientQuestionID) {
         let voteCount = ACTIVE_QUESTION ? ACTIVE_QUESTION.voteCount : '';
         $('#score').hide();
         $('#results').hide();
@@ -108,27 +108,39 @@
             $('#score').html(html).fadeIn('slow');
    
             if (question.votingOpen) {
-                renderQuestionOpen(question.meetingPatientQuestionID);
+                renderOpenQuestion(question.meetingPatientQuestionID);
             }
         } else {
-            _data.getResults(question.meetingPatientQuestionID)
-                .then(data => {
-                    let sumOfVotes = data.chartData.reduce((a, b) => a + b, 0);
-                    html = '<div class="row"><div class="col"><h2>Average score: ' + data.averageScore.toFixed(1) + '</h2></div>';
-                    html += '<div class="col"><h2>Number of votes: ' + sumOfVotes + '</div></div>';
-                    if (data.resultsReleased) {
-                        $('#score').html('<div class="col"><h2>Number of votes: ' + sumOfVotes + '</h2></div>');
-                    } else {
-                        $('#score').html('<div class="col"><h2>Number of votes: '
-                            + sumOfVotes + '</h2><h3>Voting closed</h3><h3>Results awaiting release</h3></div>');
-                    }
-                   
-                    $('#bigScore').html(html);
-                    $('#results').show();
-                    renderChart(data.chartData, data.resultsReleased);
-                });
-        }
+            //_data.getResults(question.meetingPatientQuestionID)
+            //    .then(data => {
+                    renderClosedQuestion(question.meetingPatientQuestionID);
+                //});
+        } 
     }
+
+    function renderClosedQuestion(meetingPatientQuestionID) {
+        _data.getResults(meetingPatientQuestionID)
+            .then(data => {
+                let sumOfVotes = data.chartData.reduce((a, b) => a + b, 0);
+                html = '<div class="row"><div class="col"><h2>Average score: ' + data.averageScore.toFixed(1) + '</h2></div>';
+                html += '<div class="col"><h2>Number of votes: ' + sumOfVotes + '</div></div>';
+                if (data.resultsReleased) {
+                    $('.release-results').hide();
+                    $('.enlarge-chart').show();
+                    $('#score').html('<div class="col"><h2>Number of votes: ' + sumOfVotes + '</h2></div>');
+                } else {
+                    $('.release-results').show();
+                    $('.enlarge-chart').hide();
+                    $('#score').html('<div class="col"><h2>Number of votes: '
+                        + sumOfVotes + '</h2><h3>Voting closed</h3><h3>Results awaiting release</h3></div>');
+                }
+
+                $('#bigScore').html(html);
+                $('#results').show();
+                renderChart(data.chartData, data.resultsReleased);
+            })
+    }
+
 
     function renderMeetingDetails(meeting) {
         $('.control-panel').show();
@@ -172,8 +184,9 @@
         meetingDetails: renderMeetingDetails,
         patients: renderPatients,
         questions: renderQuestions,
-        questionOpen: renderQuestionOpen,
+        questionOpen: renderOpenQuestion,
         questionResult: renderQuestionResult,
+        closedQuestion: renderClosedQuestion,
         chart: renderChart
     };
 })(DATA_API, CONFIG);

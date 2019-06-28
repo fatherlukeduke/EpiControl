@@ -21,6 +21,8 @@
         //launch
         $(document).ready(function () {
 
+
+
             $.ajaxSetup({ cache: false });
 
             let urls = {
@@ -44,7 +46,7 @@
                 APP.init(urls)
                     .then(() => {
                         MESSAGE.initSignalR();
-                        MESSAGE.initFirebase();
+                       MESSAGE.initFirebase();
                     })
             }
         })
