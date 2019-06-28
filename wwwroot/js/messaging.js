@@ -66,7 +66,10 @@ var MESSAGE = (function (_data, _config) {
                     let od = new Odometer({
                         el: el
                     });
-                    od.update(message.getControlPanelMessageData.numberOfVotes);
+                    let currentVotes = od.value;
+                    if (message.getControlPanelMessageData.numberOfVotes > currentVotes) {
+                        od.update(message.getControlPanelMessageData.numberOfVotes);
+                    }
                 }
             }
 
