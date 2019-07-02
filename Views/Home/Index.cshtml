@@ -45,7 +45,7 @@
                 //fire this Mother up
                 APP.init(urls)
                     .then(() => {
-                        MESSAGE.initSignalR();
+                        MESSAGE.initSignalR(urls.apiUrl);
                        MESSAGE.initFirebase();
                     })
             }

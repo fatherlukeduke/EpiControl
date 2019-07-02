@@ -49,9 +49,9 @@ var MESSAGE = (function (_data, _config) {
         });
     }
 
-    function initSignalR() {
+    function initSignalR(apiUrl) {
 
-        var connection = new signalR.HubConnectionBuilder().withUrl("https://api.epivote.uk/notify").build();
+        var connection = new signalR.HubConnectionBuilder().withUrl(apiUrl + "/notify").build();
         connection.on("BroadcastMessage", function (message) {
             console.log(message);
 

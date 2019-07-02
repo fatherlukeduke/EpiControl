@@ -108,6 +108,14 @@
         });
     }
 
+    function removeQuestion(meetingPatientQuestionID) {
+        return $.ajax({
+            url: _config.urls.apiUrl + '/vote/removeQuestion/' + meetingPatientQuestionID,
+            type: 'POST',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+    }
+
     function releaseResults(meetingPatientQuestionID) {
         return $.ajax({
             url: _config.urls.apiUrl + '/vote/ReleaseResults/' + meetingPatientQuestionID,
@@ -139,8 +147,8 @@
 
     //add new patient via the API
     function addNewPatient(meetingID) {
-      return  $.ajax({
-            url: 'https://api.epivote.uk/vote/AddPatient/' + meetingID,
+        return $.ajax({
+            url: _config.urls.apiUrl + '/vote/AddPatient/' + meetingID,
             type: 'POST',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
@@ -198,6 +206,7 @@
         sendTokenToServer: sendMessagingTokenToServer,
         AuthenticateWithAPI: AuthenticateWithAPI,
         releaseResults: releaseResults,
+        removeQuestion: removeQuestion,
         addPatientToLocalDB: addPatientToLocalDB
       
     };

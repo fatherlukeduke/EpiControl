@@ -18,6 +18,7 @@ namespace EpiControl.Models
         public int MeetingID { get; set; }
         public int MeetingPatientID { get; set; }
         public int? PatientNumber { get; set; }
+        public bool Removed { get; set; }
         
         [NotMapped]
         public string Age { get; set; }
