@@ -83,6 +83,14 @@
         });
     }
 
+    function removeQuestion(meetingPatientQuestionID) {
+        return $.ajax({
+            url: _config.urls.apiUrl + '/vote/RemoveQuestion/' + meetingPatientQuestionID,
+            type: 'POST',
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+    }
+
     function openMeeting(meetingID) {
       return   $.ajax({
           url: _config.urls.apiUrl + '/vote/OpenMeeting/' + meetingID,
@@ -104,14 +112,6 @@
             url: _config.urls.apiUrl + '/vote/AddMeeting',
             type: 'POST',
             data: { meetingDate: meetingDateTime },
-            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-        });
-    }
-
-    function removeQuestion(meetingPatientQuestionID) {
-        return $.ajax({
-            url: _config.urls.apiUrl + '/vote/removeQuestion/' + meetingPatientQuestionID,
-            type: 'POST',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
     }
@@ -147,8 +147,8 @@
 
     //add new patient via the API
     function addNewPatient(meetingID) {
-        return $.ajax({
-            url: _config.urls.apiUrl + '/vote/AddPatient/' + meetingID,
+      return  $.ajax({
+            url: _config.urls.apiUrl +  '/vote/AddPatient/' + meetingID,
             type: 'POST',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });

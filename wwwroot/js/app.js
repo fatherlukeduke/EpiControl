@@ -141,20 +141,6 @@ var APP = (function (_data, _render, _config) {
                 $('#addPatientError').html('You need to fill all the fields in.').show();
             }
 
-            //if (validated) {
-            //    let meetingID = $('#meetingChoices').val();
-            //    _data.addNewPatient(
-            //        $('#newHospitalNumber').val(),
-            //        $('#newFirstname').val(),
-            //        $('#newSurname').val(),
-            //        $('#newDOB').val(),
-            //        $('#meetingChoices').val()
-            //    ).then(patient => _data.getPatients($('#meetingChoices').val()))
-            //        .then(patients => _render.patients(patients));
-            //    $('#addNewPatientDialog').modal('hide');
-            //} else {
-            //    $('#addPatientError').html('You need to fill all the fields in.').show();
-            //}
         });
 
 
@@ -190,6 +176,20 @@ var APP = (function (_data, _render, _config) {
                     ACTIVE_QUESTION = question;
                     _render.questionOpen(meetingPatientQuestionID);
                 })
+                .catch(err => console.log('Error: ' + JSON.stringify(err)));
+        });
+
+        //remove questiion
+        //------------------------------------------------------------------
+        $('body').on('click', '.remove-question', e => {
+            var meetingPatientQuestionID = $(e.currentTarget).data('meeting-patient-question-id');
+            var meetingPatientID = $(e.currentTarget).data('meeting-patient-id');
+            _data.removeQuestion(meetingPatientQuestionID)
+                .then(() => {
+                    $('#score').html('');
+                    return _data.getQuestionsForPatient(meetingPatientID);
+                })
+                .then(questions => _render.questions(questions, meetingPatientID))
                 .catch(err => console.log('Error: ' + JSON.stringify(err)));
         });
 
@@ -345,7 +345,7 @@ var APP = (function (_data, _render, _config) {
             const meetingPatientQuestionID = $('.selected-question').data('meeting-patient-question-id');
             _data.releaseResults(meetingPatientQuestionID)
                 .then(_render.closedQuestion(meetingPatientQuestionID))
-                .catch(showMessage('There was a problem processing the server request', 'alert-danger'));
+                .catch((err) => { showMessage('There was a problem processing the server request:' + err, 'alert-danger') });
         });
 
 

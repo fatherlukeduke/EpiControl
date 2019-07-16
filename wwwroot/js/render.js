@@ -97,7 +97,7 @@
         if (!question.votingComplete) {
             $('#score').hide();
             $('#results').hide();
-            if ( CURRENT_MEETING && CURRENT_MEETING.meetingOpen) {
+            if ( CURRENT_MEETING && CURRENT_MEETING.meetingOpen ) {
                 html = '<h3>This question has not been voted on</h3>';
                 html += '<button data-meetingid="' + this.meetingID + '" data-meeting-patient-question-id="' +
                     question.meetingPatientQuestionID + '" data-meeting-patient-id="' + question.meetingPatientID +
@@ -105,6 +105,8 @@
             } else {
                 html = '<h3>This meeting is not open for voting</h3>';
             }
+            html += '<button data-meeting-patient-question-id="' + question.meetingPatientQuestionID
+                + '" data-meeting-patient-id="' + question.meetingPatientID + '" class="mt-3 mb-2 btn btn-info btn-block  remove-question">Remove question</button>';
             $('#score').html(html).fadeIn('slow');
    
             if (question.votingOpen) {
